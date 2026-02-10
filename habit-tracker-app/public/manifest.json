@@ -3,13 +3,23 @@
   "description": "A React-powered habit-tracking Chrome Extension",
   "version": "1.0",
   "manifest_version": 3,
-  "action": {
-    "default_popup": "index.html"
-  },
   "icons": {
     "16": "icons/Habitlio-Icon16.png",
     "32": "icons/Habitlio-Icon32.png",
     "48": "icons/Habitlio-Icon48.png",
     "128": "icons/Habitlio-Icon128.png"
+  },
+  "permissions": [
+    "sidePanel"
+  ],
+  "action": {
+    "default_title": "Open Habit.lio"
+  },
+
+  "side_panel": {
+    "default_path": "index.html"
+  },
+  "background": {
+    "service_worker": "background.js"
   }
 }
