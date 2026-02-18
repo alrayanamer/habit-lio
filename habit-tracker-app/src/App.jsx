@@ -3,6 +3,7 @@ import { GoogleAuthProvider, signInWithCredential, onAuthStateChanged } from "fi
 import { auth } from "./firebase";
 import { createUserProfile, listHabits, createHabit, deleteHabit } from "./firestore";
 import './App.css';
+import Menu from "./Menu";
 
 function App() {
     const [user, setUser] = useState(null);
@@ -103,6 +104,7 @@ function App() {
             <h1>Habit-lio</h1>
             {user ? (
                 <div>
+                    <Menu />
                     <p>Welcome, <strong>{user.email}</strong>!</p>
                     
                     <div>
