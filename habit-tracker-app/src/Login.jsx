@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { GoogleAuthProvider, signInWithCredential, onAuthStateChanged } from "firebase/auth";
 import { auth } from "./firebase";
-import './App.css';
-import './login.css'
+import './Login.css'
+import './index.css'
 import hiddenIcon from './icons/hidden.png'
 import notHiddenIcon from './icons/not_hidden.png'
 import googleIcon from './icons/google_icon.png'
