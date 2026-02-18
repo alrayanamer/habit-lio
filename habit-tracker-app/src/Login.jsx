@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { GoogleAuthProvider, signInWithCredential, onAuthStateChanged } from "firebase/auth";
 import { auth } from "./firebase";
-import './App.css';
-import './login.css'
+import './Login.css'
+import './index.css'
 import hiddenIcon from './icons/hidden.png'
 import notHiddenIcon from './icons/not_hidden.png'
 import googleIcon from './icons/google_icon.png'
@@ -30,7 +30,7 @@ function LoginInput() {
 function Signup() {
     return (
         <div> {/* Placeholder link for now */}
-            <p className="sign_up">Don't have an account? <a href="" style={{ cursor: "pointer" }}>Sign Up</a></p>
+            <p className="sign_up">Don't have an account? <a href="">Sign Up</a></p>
         </div>
     );
 }
@@ -47,7 +47,7 @@ function GoogleSignin() {
 function LoginFrame() {
     const signinText = "Sign in to Habit-lio";
     return (
-        <div className="box">
+        <div className="login_box">
             <p className="signin_text">{signinText}</p>
            
            <LoginInput />
@@ -92,8 +92,6 @@ function PasswordInput({ password, setPassword }) {
 }
 
 function UsernameInput({ username, setUsername }) {
-   
-
     return (
       <div>
             <div className="field_label">
