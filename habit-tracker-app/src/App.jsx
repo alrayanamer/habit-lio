@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { GoogleAuthProvider, signInWithCredential, onAuthStateChanged } from "firebase/auth";
+import { GoogleAuthProvider, signInWithCredential, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "./firebase";
 import { createUserProfile, listHabits, createHabit, deleteHabit, exportHabits } from "./firestore";
 import './App.css';
@@ -10,6 +10,10 @@ function App() {
     const [habits, setHabits] = useState([]);
     const [newHabitTitle, setNewHabitTitle] = useState("");
     const [loading, setLoading] = useState(false);
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setAuthError] = useState(null);
+    const [isSignUp, setIsSignUp] = useState(true);
 
     const loadHabits = async (uid) => {
         try {
@@ -33,7 +37,7 @@ function App() {
         return () => unsubscribe();
     }, []);
 
-    const handleSignIn = () => {
+    const handleGoogleSignIn = () => {
         chrome.identity.clearAllCachedAuthTokens(() => { // cleared cache tokens because of errors without it
             chrome.identity.getAuthToken({ interactive: true }, (token) => {
                 if (chrome.runtime.lastError || !token) {
@@ -64,13 +68,32 @@ function App() {
 
     const handleSignOut = () => {
         auth.signOut().then(() => {
-            // Optional: Also revoke the Chrome token if you want a total logout
             chrome.identity.getAuthToken({ interactive: false }, (token) => {
                 if (token) {
                     chrome.identity.removeCachedAuthToken({ token }, () => {});
                 }
             });
         });
+    };
+
+    const handleEmailAuth = async (event) => {
+        event.preventDefault();
+        setAuthError(null);
+        try {
+            if (isSignUp) {
+                // sign up if no account
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                await createUserProfile(userCredential.user.uid, { email: userCredential.user.email });
+                console.log("User registered");
+            } else {
+                // sign in with email
+                await signInWithEmailAndPassword(auth, email, password);
+                console.log("User signed in");
+            }
+        } catch (error) {
+            setAuthError(error.message);
+            console.error("Auth error:", error.message);
+        }
     };
 
     const handleAddHabit = async () => {
@@ -109,7 +132,7 @@ function App() {
         }
     };
 
-    return (
+    return ( // home page after login
         <div className="card">
             <h1>Habit-lio</h1>
             {user ? (
@@ -158,10 +181,32 @@ function App() {
 
                     <button onClick={handleSignOut}>Sign Out</button>
                 </div>
-            ) : (
+            ) : ( // sign in/sign up
                 <div>
                     <p>Track your habits!</p>
-                    <button onClick={handleSignIn}>Sign in with Google</button>
+                    <form onSubmit={handleEmailAuth}>
+                        <h2>{isSignUp ? "Create Account" : "Welcome Back"}</h2>
+                        <div>
+                            <label style={{ color: 'white' }}>Email:</label>
+                            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                        </div>
+                        <div>
+                            <label style={{ color: 'white' }}>Password:</label>
+                            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+                        </div>
+                        <button type="submit">{isSignUp ? "Sign Up" : "Sign In"}</button>
+                        {error && <p style={{ color: 'red', fontSize: '12px' }}>{error}</p>}
+                    </form>
+
+                    <button
+                        onClick={() => setIsSignUp(!isSignUp)}
+                        style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer', textDecoration: 'underline' }}
+                    >
+                        {isSignUp ? "Already have an account? Sign In" : "Need an account? Sign Up"}
+                    </button>
+
+                    <div style={{margin: '15px 0'}}>OR</div>
+                    <button onClick={handleGoogleSignIn}>Sign in with Google</button>
                 </div>
             )}
         </div>
