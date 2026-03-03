@@ -248,7 +248,7 @@ function App() {
                         </div>
                         {habits.length === 0 && <p>No habits yet. Create one to get started!</p>}
                     </div>
-
+                    <br />
                     <button onClick={handleSignOut}>Sign Out</button>
                 </div>
             ) : ( // sign in/sign up
