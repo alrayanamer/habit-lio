@@ -10,6 +10,7 @@ import googleIcon from './icons/google_icon.png';
 import Menu from "./Menu";
 import HabitCreate from "./habitCreate";
 import NewHabitForm from "./habitAnalysis";
+import Habit from "./habitComponents/habit";
 
 function App() {
     const [user, setUser] = useState(null);
@@ -233,23 +234,28 @@ function App() {
                     )}
                     <div>
                         {/* // Display habits */}
-                        <h2>Your Habits</h2>
-                        <ul>
+                        <h2 style={{fontSize: "28px", color: "black"}}>
+                            Your Habits</h2>
+                        {/* <ul> */}
                             {habits.map((habit) => (
-                                <li key={habit.id}>
-                                    <div>
-                                        <h3>{habit.title}</h3>
-                                        {habit.description && <p>{habit.description}</p>}
-                                        <span>{habit.frequency}</span>
-                                    </div>
-                                    <button
-                                        onClick={() => handleDeleteHabit(habit.id)}
-                                    >
-                                        Delete
-                                    </button>
-                                </li>
+                                < Habit key={habit.id} 
+                                name={habit.title} 
+                                goal={habit.goal} 
+                                period={habit.period} />
+                                // <li key={habit.id}>
+                                //     <div>
+                                //         <h3>{habit.title}</h3>
+                                //         {habit.description && <p>{habit.description}</p>}
+                                //         <span>{habit.frequency}</span>
+                                //     </div>
+                                //     <button
+                                //         onClick={() => handleDeleteHabit(habit.id)}
+                                //     >
+                                //         Delete
+                                //     </button>
+                                // </li>
                             ))}
-                        </ul>
+                        {/* </ul> */}
                         <div>
                             <button onClick={() => handleExportHabits()}>Export Habits to CSV</button>
                         </div>
