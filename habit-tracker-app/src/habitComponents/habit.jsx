@@ -15,8 +15,10 @@ function Habit(props){
             style={{fontSize: "24px", color: "red"}}>
               Goal: {props.goal ? props.goal : "0"}/{props.period ? props.period : "week"}</h2>
         </div>
-        <h3 className="habit-streak" title="Habit Streak">🔥{props.streak ? props.streak : "0"}</h3>
-        <HabitEdit />
+        <div className="habit-streak-edit">
+          <h3 className="habit-streak" title="Habit Streak">🔥{props.streak ? props.streak : "0"}</h3>
+          <HabitEdit />
+        </div>
       </div>
       <br />
     </div>
