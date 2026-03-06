@@ -1,8 +1,16 @@
 import { getAuth, deleteUser, signOut } from "firebase/auth";
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  deleteDoc,
+  doc,
+} from "firebase/firestore";
 import "./Settings.css";
 
 function SettingsPopup({ closePopup }) {
   const auth = getAuth();
+  const db = getFirestore();
 
   const handleDeleteAccount = async () => {
     const confirmDelete = confirm(
@@ -12,12 +20,41 @@ function SettingsPopup({ closePopup }) {
     if (!confirmDelete) return;
 
     try {
-      await deleteUser(auth.currentUser);
-      alert("Account deleted.");
+      const user = auth.currentUser;
+      if (!user) throw new Error("No user signed in");
+
+      // Force token refresh
+      await user.getIdToken(true);
+
+      const uid = user.uid;
+      const userDocRef = doc(db, "users", uid);
+
+      // Delete habits subcollection explicitly
+      const habitsSnapshot = await getDocs(
+        collection(db, "users", uid, "habits"),
+      );
+      for (const docSnap of habitsSnapshot.docs) {
+        await deleteDoc(docSnap.ref);
+      }
+
+      // Delete main user document
+      await deleteDoc(userDocRef);
+
+      // Delete Auth user
+      await deleteUser(user);
+
+      alert("Your account and all associated data have been deleted.");
       window.location.reload();
     } catch (error) {
-      console.error(error);
-      alert("You may need to log in again before deleting your account.");
+      console.error("Error deleting account:", error);
+
+      if (error.code === "auth/requires-recent-login") {
+        alert(
+          "Please sign out and sign in again before deleting your account.",
+        );
+      } else {
+        alert("Failed to delete account. Please try again.");
+      }
     }
   };
 
