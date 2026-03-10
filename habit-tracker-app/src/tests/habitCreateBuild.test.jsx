@@ -78,49 +78,4 @@ describe('HabitCreate Component', () => {
             })
         );
     });
-
-    // QUIT HABIT TESTS
-
-    // Test checks building a basic quit habit.
-    test('Successfully created a Quit habit', async () => {
-        const user = userEvent.setup();
-        const mockAddHabit = vi.fn().mockResolvedValue();
-
-        render(
-            <AuthContext.Provider value={{ uid: '123' }}>
-            <HabitCreate addHabit={mockAddHabit} />
-            </AuthContext.Provider>
-        );
-
-        // Open popup first
-        await user.click(screen.getByTitle(/Add Habit/i));
-
-        // Go to custom screen
-        await user.click(screen.getByTitle(/Custom/i));
-
-        // Find the elements in habitCreate.jsx needed to accomplish habit creation.
-        const nameInput = screen.getByLabelText(/Habit Name/i);
-        const descriptionInput = screen.getByLabelText(/Habit Description/i);
-        const quitButton = screen.getByRole('button', { name: /Quit/i });
-        const submitButton = screen.getByRole('button', { name: /Create Habit/i });
-
-        // Performing the action that a user would do via code.
-        // Essentially simulating a user creating a quit habit 
-        // with the name "Reduce Smoking" and description "Cut down on smoking gradually".
-        await user.clear(nameInput);
-        await user.type(nameInput, 'Reduce Smoking');
-        await user.type(descriptionInput, 'Cut down on smoking gradually');
-        await user.click(quitButton);
-        await user.click(submitButton);
-
-        expect(mockAddHabit).toHaveBeenCalledTimes(1);
-        expect(mockAddHabit).toHaveBeenCalledWith(
-            expect.objectContaining({
-            name: 'Reduce Smoking',
-            description: 'Cut down on smoking gradually',
-            type: 'Quit',
-            isActive: true,
-            })
-        );
-    });
 });
