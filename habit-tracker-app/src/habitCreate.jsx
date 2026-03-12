@@ -394,6 +394,8 @@ function CreateHabitForm(props) {
                             <option value="gallons">gallons</option>
                             <option value="liters">liters</option>
                             <option value="pages">pages</option>
+                            <option value="words">words</option>
+                            <option value="dollars">dollars</option>
                             <option value="hours">hours</option>
                             <option value="minutes">minutes</option>
                         </select>
@@ -482,6 +484,15 @@ function HabitCreate({addHabit}) {
     const [habitName, setHabitName] = useState("");
     const [emoji, setEmoji] = useState("📝");
 
+    // Handle closing the popup and resetting all states to default
+    const handleClose = () => {
+        setCategory("Popular");
+        handleSelect(category);
+        setEmoji("📝");
+        setHabitName("");
+        showPopup(false);
+    }
+
     const handleClick = () => {
         handleSelect(category);
         setClicked(!clicked);
@@ -503,10 +514,11 @@ function HabitCreate({addHabit}) {
         <div>
             <div id = "popup-container">
                 <div id="popup">
-                    <div id="back-button" onClick={() => setCategory("Popular")} hidden={category !== "Custom"}>
+                    {/* Click the back button will refresh habit creating screen */}
+                    <div id="back-button" onClick={() => {setCategory("Popular"); setEmoji("📝"); setHabitName("")}} hidden={category !== "Custom"}>
                         <ChevronLeft size={36}/>
                         </div>
-                    <div id="close-button" onClick={handleClick}><X size={36}/></div>
+                    <div id="close-button" onClick={handleClose}><X size={36}/></div>
                     {/* It will switch between the habit creation and selection window
                     depending on whether custom was selected or button was clicked */}
                     {category !== "Custom" ? (
@@ -548,7 +560,7 @@ function HabitCreate({addHabit}) {
                                 <div id="create-habit">
                                     <CreateHabitForm habitName={habitName} 
                                     onSubmission={() => {
-                                        setCategory("Popular"), 
+                                        setCategory("Popular"),
                                         handleClick()
                                         ;}}
                                     emoji={emoji}
