@@ -175,8 +175,22 @@ describe('HabitCreate Component', () => {
                 description: 'Cut down on smoking gradually',
                 type: 'Quit',
                 color: '#f8aaaa',
-                goal: { value: "1", period: 'Day', 
-                    unit: 'steps' , taskDays: 'everyday', taskDaysSelected: null},
+                goal:{ 
+                    value: "1", 
+                    period: 'Day', 
+                    unit: 'steps', 
+                    taskDays: 'everyday',
+                    numOfDays: 0,
+                    daysSelected: []
+                },
+                priority: "none",
+                reminder: {
+                    activated: false,
+                    message: "",
+                    time: ""
+                },
+                startDate: "",
+                endDate: "",
                 isActive: true
             })
         );
@@ -230,8 +244,22 @@ describe('HabitCreate Component', () => {
                 description: 'Cut down on smoking gradually',
                 type: 'Quit',
                 color: '#f8aaaa',
-                goal: { value: "100", period: 'Week', 
-                    unit: 'steps' , taskDays: 'everyday', taskDaysSelected: null},
+                goal:{ 
+                    value: "100", 
+                    period: 'Week', 
+                    unit: 'steps', 
+                    taskDays: 'everyday',
+                    numOfDays: 0,
+                    daysSelected: []
+                },
+                priority: "none",
+                reminder: {
+                    activated: false,
+                    message: "",
+                    time: ""
+                },
+                startDate: "",
+                endDate: "",
                 isActive: true
             })
         );
@@ -297,9 +325,22 @@ describe('HabitCreate Component', () => {
                 description: 'Cut down on smoking gradually',
                 type: 'Quit',
                 color: '#f8aaaa',
-                goal: { value: "100", period: 'Week', 
-                    unit: 'steps' , taskDays: 'everyday', taskDaysSelected: null},
-                reminder: { activated: true, time: "13:00", message: "Yes" },
+                goal:{ 
+                    value: "100", 
+                    period: 'Week', 
+                    unit: 'steps', 
+                    taskDays: 'everyday',
+                    numOfDays: 0,
+                    daysSelected: []
+                },
+                priority: "none",
+                reminder: {
+                    activated: true,
+                    message: "Yes",
+                    time: "13:00"
+                },
+                startDate: "",
+                endDate: "",
                 isActive: true
             })
         );
@@ -367,10 +408,22 @@ describe('HabitCreate Component', () => {
                 description: 'Cut down on smoking gradually',
                 type: 'Quit',
                 color: '#f8aaaa',
-                goal: { value: "100", period: 'Week', 
-                    unit: 'steps' , taskDays: 'everyday', taskDaysSelected: null},
-                reminder: { activated: true, time: "13:00", message: "Yes" },
-                priority: 'high',
+                goal:{ 
+                    value: "100", 
+                    period: 'Week', 
+                    unit: 'steps', 
+                    taskDays: 'everyday',
+                    numOfDays: 0,
+                    daysSelected: []
+                },
+                priority: "high",
+                reminder: {
+                    activated: true,
+                    message: "Yes",
+                    time: "13:00"
+                },
+                startDate: "",
+                endDate: "",
                 isActive: true
             })
         );

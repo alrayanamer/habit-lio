@@ -145,7 +145,7 @@ function CheckBoxDay({ name, setDaysSelected }) {
 }
 
 
-function SelectTaskDays({mode, setClicked, daysSelected, setDaysSelected}) {
+function SelectTaskDays({mode, setClicked, daysSelected, setDaysSelected, setNumOfDays}) {
     // const [error, showError] = useState(false);
     const isError = daysSelected.length === 0;
     setClicked(mode === "specific_days" && isError);
@@ -174,6 +174,14 @@ function SelectTaskDays({mode, setClicked, daysSelected, setDaysSelected}) {
                     <CheckBoxDay name="Sunday" setDaysSelected={setDaysSelected}/>
                 </div>
             )}
+            {mode === "number_days" && (
+                <div>
+                    <label htmlFor='number-days' style={{fontSize: "16px"}}>
+                        Enter the number of days per week you want to accomplish this habit:
+                    </label>
+                    <input type="number" id="number-days" min="1" max="7" onChange={(e) => setNumOfDays(parseInt(e.target.value) || 1)} />
+                </div>
+            )}
         </div>
     );
 }
@@ -183,6 +191,7 @@ function CreateHabitForm(props) {
     const [clicked, setClicked] = useState(false);
     const [taskDaysSelected, setTaskDaysSelected] = useState("everyday");
     const [daysSelected, setDaysSelected] = useState([]);
+    const [numOfDays, setNumOfDays] = useState(0);
     // Access the user from the AuthContext
     const user = useContext(AuthContext);
     console.log("Current user in CreateHabitForm:", user ? user.uid : null); // Debugging line
@@ -241,7 +250,8 @@ function CreateHabitForm(props) {
                     unit: document.getElementById("unit").value,
                     period: periodSelected,
                     taskDays: document.getElementById("task-day").value,
-                    daysSelected: daysSelected
+                    daysSelected: daysSelected,
+                    numOfDays: numOfDays
                 },
                 reminder: {
                     activated: document.getElementById("reminder-activated").checked,
@@ -370,7 +380,8 @@ function CreateHabitForm(props) {
                     mode={taskDaysSelected}
                     setClicked = {setClicked} 
                     daysSelected = {daysSelected}
-                    setDaysSelected={setDaysSelected}/>
+                    setDaysSelected={setDaysSelected}
+                    setNumOfDays={setNumOfDays}/>
                 </div>
                 <hr style={{color: "#000000", width: "100%"}}/>
                 {/* Reminder Settings */}
