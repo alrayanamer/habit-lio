@@ -15,7 +15,7 @@ function Habit({habit, uid, loadHabits}){
     return(
     <div>
       <div className ="habit-created" style={{backgroundColor: habit.color ?? "#FFFFFF"}}>
-        <h1 style={{fontSize: "64px"}}>📝&nbsp;</h1>
+        <h1 style={{fontSize: "64px"}}>{habit.emoji || "📝"}&nbsp;</h1>
         <div className='habit-info'>
             <h1 className='habit-name'
             style={{fontSize: dynamicFontSize, color: "black"}}>{habit.name}</h1>
