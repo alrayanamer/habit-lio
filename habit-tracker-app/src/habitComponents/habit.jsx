@@ -6,6 +6,14 @@ import '../css/habit.css'
 function Habit({habit, uid, loadHabits, onEdit}){
     const habitName = habit.name ?? "";
     const dynamicFontSize = habitName.length > 15 ? "20px" : "30px";
+    let dynamicGoalSize = "22px";
+    if (habit.goal?.value >= 1000 && habit.goal?.value < 10000) {
+      dynamicGoalSize = "20px";
+    } else if (habit.goal?.value >= 10000) {
+      dynamicGoalSize = "16px";
+    } else {
+      dynamicGoalSize = "22px";
+    }
     const [isCompleted, setIsCompleted] = useState(isHabitCompletedToday(habit));
     const [isToggling, setIsToggling] = useState(false);
     
@@ -39,14 +47,14 @@ function Habit({habit, uid, loadHabits, onEdit}){
           disabled={isToggling}
           title={isCompleted ? "Mark as incomplete" : "Mark as complete"}
         />
-        <h1 style={{fontSize: "64px"}}>📝&nbsp;</h1>
+        <h1 style={{fontSize: "64px"}}>{habit.emoji ?? "📝"}&nbsp;</h1>
         <div className='habit-info'>
             <h1 className='habit-name'
             style={{fontSize: dynamicFontSize, color: "black"}}>{habitName}</h1>
             <h2 
-            style={{fontSize: "24px", color: "red"}}>
-              Goal: {habit.goal?.value ?? "0"}&nbsp; 
-              {habit.goal?.unit ?? "steps"}/{habit.goal?.period ?? "day"}</h2>
+            style={{fontSize: dynamicGoalSize, color: "red"}}>
+              Goal: {habit.goal.value === "" ? "0" : habit.goal.value}&nbsp; 
+              {habit.goal.unit ?? "steps"}&nbsp;/&nbsp;{habit.goal?.period ?? "day"}</h2>
         </div>
         <div className="habit-streak-edit">
           <h3 className="habit-streak" title="Habit Streak">🔥{habit.streak ?? 0}</h3>

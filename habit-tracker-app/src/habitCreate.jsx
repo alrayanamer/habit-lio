@@ -5,6 +5,8 @@ import { AuthContext } from "./AuthContext";
 import { createUserProfile, listHabits, createHabit, 
     deleteHabit, exportHabits } from "./firestore";
 import './habit-creation.css'
+import Calendar from './habitComponents/calendar';
+import EmojiSelect from './habitComponents/EmojiSelect';
 
 import { X, Flame, Activity, Volleyball, HouseHeart, GraduationCap, Plus, ChevronLeft, CirclePlus, DockIcon} from 'lucide-react'
 import { doc } from 'firebase/firestore';
@@ -14,14 +16,15 @@ function showPopup(show) {
     popup.style.display = show ? "block" : "none";
 }
 
-function HabitOption({name, onAddClick, modifyHabit}) {
+function HabitOption({name, onAddClick, modifyHabit, modifyEmoji}) {
     return (
         <div>
             <div style={{display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "center"}}>
                 <div className="habit-options">
                     <div id="habit-container">
                         <p style={{fontSize: "36px", color: 'black'}}>{name}</p>
-                        <button style={{borderRadius: "50%"}} className="habit-plus" onClick={() => {onAddClick(); modifyHabit();}}>
+                        <button style={{borderRadius: "50%"}} className="habit-plus" 
+                        onClick={() => {onAddClick(); modifyHabit();modifyEmoji();}}>
                             <Plus color="#000000"/>
                         </button>
                     </div>
@@ -51,69 +54,175 @@ function HabitWindow(props) {
             </p>
             <div hidden={categorySelected !== "Popular"} className="custom-habit-form">
                 <HabitOption name="🚶 Walk" 
-                onAddClick={() => props.onSelectCustom()} modifyHabit={() => props.onSelectName("Walk")}/>
+                onAddClick={() => props.onSelectCustom()} 
+                modifyHabit={() => props.onSelectName("Walk")}
+                modifyEmoji = {() => props.onSelectEmoji("🚶")}/>
                 <HabitOption name="🏃‍♂️ Run" onAddClick={() => props.onSelectCustom()} 
-                modifyHabit={() => props.onSelectName("Run")}/>
-                <HabitOption name="💧 Drink Water" onAddClick={() => props.onSelectCustom()}
-                 modifyHabit={() => props.onSelectName("Drink Water")}/>
+                modifyHabit={() => props.onSelectName("Run")}
+                modifyEmoji = {() => props.onSelectEmoji("🏃‍♂️")}/>
                 <HabitOption name="🛌 Sleep" onAddClick={() => props.onSelectCustom()} 
-                modifyHabit={() => props.onSelectName("Sleep")}/>
+                modifyHabit={() => props.onSelectName("Sleep")}
+                modifyEmoji = {() => props.onSelectEmoji("🛌")}/>
                 <HabitOption name="📚 Study" onAddClick={() => props.onSelectCustom()} 
-                modifyHabit={() => props.onSelectName("Study")}/>
+                modifyHabit={() => props.onSelectName("Study")}
+                modifyEmoji = {() => props.onSelectEmoji("📚")}/>
             </div>
             <div hidden={categorySelected !== "Health"} className="custom-habit-form">
-                <HabitOption name="🍽️ Eat Snack" onAddClick={() => props.onSelectCustom()} modifyHabit={() => props.onSelectName("Eat Snack")}/>
-                <HabitOption name="🪥 Brush Teeth" onAddClick={() => props.onSelectCustom()} modifyHabit={() => props.onSelectName("Brush Teeth")}/>
-                <HabitOption name="💧 Drink Water" onAddClick={() => props.onSelectCustom()} modifyHabit={() => props.onSelectName("Drink Water")}/>
-                <HabitOption name="🛌 Sleep" onAddClick={() => props.onSelectCustom()} modifyHabit={() => props.onSelectName("Sleep")}/>
-                <HabitOption name="🧘 Meditate" onAddClick={() => props.onSelectCustom()} modifyHabit={() => props.onSelectName("Meditate")}/>
+                <HabitOption name="🍽️ Eat Snack" onAddClick={() => props.onSelectCustom()} modifyHabit={() => props.onSelectName("Eat Snack")} modifyEmoji = {() => props.onSelectEmoji("🍽️")}/>
+                <HabitOption name="🪥 Brush Teeth" onAddClick={() => props.onSelectCustom()} modifyHabit={() => props.onSelectName("Brush Teeth")} modifyEmoji = {() => props.onSelectEmoji("🪥")}/>
+                <HabitOption name="💧 Drink Water" onAddClick={() => props.onSelectCustom()} modifyHabit={() => props.onSelectName("Drink Water")} modifyEmoji = {() => props.onSelectEmoji("💧")}/>
+                <HabitOption name="🛌 Sleep" onAddClick={() => props.onSelectCustom()} modifyHabit={() => props.onSelectName("Sleep")} modifyEmoji = {() => props.onSelectEmoji("🛌")}/>
+                <HabitOption name="🧘 Meditate" onAddClick={() => props.onSelectCustom()} modifyHabit={() => props.onSelectName("Meditate")} modifyEmoji = {() => props.onSelectEmoji("🧘")}/>
             </div>
             <div hidden={categorySelected !== "Exercise"} className="custom-habit-form">
                 <HabitOption name="🚶 Walk" onAddClick={() => props.onSelectCustom()} 
-                modifyHabit={() => props.onSelectName("Walk")}/>
+                modifyHabit={() => props.onSelectName("Walk")}
+                modifyEmoji = {() => props.onSelectEmoji("🚶")}/>
                 <HabitOption name="🏃‍♂️ Run" onAddClick={() => props.onSelectCustom()} 
-                modifyHabit={() => props.onSelectName("Run")}/>
+                modifyHabit={() => props.onSelectName("Run")}
+                modifyEmoji = {() => props.onSelectEmoji("🏃‍♂️")}/>
                 <HabitOption name="🚴 Bike" onAddClick={() => props.onSelectCustom()} 
-                modifyHabit={() => props.onSelectName("Bike")}/>
+                modifyHabit={() => props.onSelectName("Bike")}
+                modifyEmoji = {() => props.onSelectEmoji("🚴")}/>
                 <HabitOption name="🏋️ Lift Weights" onAddClick={() => props.onSelectCustom()} 
-                modifyHabit={() => props.onSelectName("Lift Weights")}/>
+                modifyHabit={() => props.onSelectName("Lift Weights")}
+                modifyEmoji = {() => props.onSelectEmoji("🏋️")}/>
                 <HabitOption name="🤸 Stretch" onAddClick={() => props.onSelectCustom()} 
-                modifyHabit={() => props.onSelectName("Stretch")}/>
+                modifyHabit={() => props.onSelectName("Stretch")}
+                modifyEmoji = {() => props.onSelectEmoji("🤸")}/>
                 <HabitOption name="🧘 Meditate" onAddClick={() => props.onSelectCustom()} 
-                modifyHabit={() => props.onSelectName("Meditate")}/>
+                modifyHabit={() => props.onSelectName("Meditate")}
+                modifyEmoji = {() => props.onSelectEmoji("🧘")}/>
             </div>
             <div hidden={categorySelected !== "Financial"} className="custom-habit-form">
                 <HabitOption name="💰 Save Money" onAddClick={() => props.onSelectCustom()} 
-                modifyHabit={() => props.onSelectName("Save Money")}/>
+                modifyHabit={() => props.onSelectName("Save Money")}
+                modifyEmoji = {() => props.onSelectEmoji("💰")}/>
                 <HabitOption name="📈 Invest" onAddClick={() => props.onSelectCustom()} 
-                modifyHabit={() => props.onSelectName("Invest")}/>
+                modifyHabit={() => props.onSelectName("Invest")}
+                modifyEmoji = {() => props.onSelectEmoji("📈")}/>
                 <HabitOption name="📉 Spend Less" onAddClick={() => props.onSelectCustom()} 
-                modifyHabit={() => props.onSelectName("Spend Less")}/>
+                modifyHabit={() => props.onSelectName("Spend Less")}
+                modifyEmoji = {() => props.onSelectEmoji("📉")}/>
                 <HabitOption name="🧾 Pay Bills" onAddClick={() => props.onSelectCustom()} 
-                modifyHabit={() => props.onSelectName("Pay Bills")}/>
+                modifyHabit={() => props.onSelectName("Pay Bills")}
+                modifyEmoji = {() => props.onSelectEmoji("🧾")}/>
                 <HabitOption name="📝 Apply for Jobs" onAddClick={() => props.onSelectCustom()} 
-                modifyHabit={() => props.onSelectName("Apply for Jobs")}/>
+                modifyHabit={() => props.onSelectName("Apply for Jobs")}
+                modifyEmoji = {() => props.onSelectEmoji("📝")}/>
             </div>
             <div hidden={categorySelected !== "Learning"} className="custom-habit-form">
                 <HabitOption name="📚 Study" onAddClick={() => props.onSelectCustom()} 
-                modifyHabit={() => props.onSelectName("Study")}/>
+                modifyHabit={() => props.onSelectName("Study")}
+                modifyEmoji = {() => props.onSelectEmoji("📚")}/>
                 <HabitOption name="🧑‍🏫 Attend Class" onAddClick={() => props.onSelectCustom()} 
-                modifyHabit={() => props.onSelectName("Attend Class")}/>
+                modifyHabit={() => props.onSelectName("Attend Class")}
+                modifyEmoji = {() => props.onSelectEmoji("🧑‍🏫")}/>
                 <HabitOption name="📝 Take Notes" onAddClick={() => props.onSelectCustom()} 
-                modifyHabit={() => props.onSelectName("Take Notes")}/>
+                modifyHabit={() => props.onSelectName("Take Notes")}
+                modifyEmoji = {() => props.onSelectEmoji("📝")}/>
                 <HabitOption name="📖 Read" onAddClick={() => props.onSelectCustom()} 
-                modifyHabit={() => props.onSelectName("Read")}/>
+                modifyHabit={() => props.onSelectName("Read")}
+                modifyEmoji = {() => props.onSelectEmoji("📖")}/>
                 <HabitOption name="🧑‍💻 Code" onAddClick={() => props.onSelectCustom()} 
-                modifyHabit={() => props.onSelectName("Code")}/>
+                modifyHabit={() => props.onSelectName("Code")}
+                modifyEmoji = {() => props.onSelectEmoji("🧑‍💻")}/>
             </div>
         </div>
     </div>
     );
 }
 
+function CheckBoxDay({ name, setDaysSelected }) {
+    // Start checked by default
+    const [checked, setChecked] = useState(false);
+
+    const handleToggle = () => {
+        const nextCheckedState = !checked;
+        setChecked(nextCheckedState);
+
+        if (nextCheckedState) {
+            // Logic to ADD to the array (assuming setDaysSelected is an array setter)
+            setDaysSelected(prev => [...prev, name]);
+        } else {
+            // Logic to REMOVE from the array
+            setDaysSelected(prev => prev.filter(day => day !== name));
+        }
+    };
+
+    return (
+        <div style={{ fontSize: "14px" }}>
+            <input 
+                type="checkbox"
+                id={name}
+                name={name}
+                checked={checked}
+                // FIXED: Wrapped in an arrow function so it only runs on click
+                onChange={() => handleToggle()} 
+            />
+            <label htmlFor={name}>{name}</label>
+        </div>
+    );
+}
+
+
+function SelectTaskDays({mode, setClicked, daysSelected, setDaysSelected, setNumOfDays}) {
+    // const [error, showError] = useState(false);
+    const isError = daysSelected.length === 0;
+    setClicked(mode === "specific_days" && isError);
+    console.log("DAYS:" + daysSelected);
+    return(
+        <div>
+            {mode === "specific_month_days" && (
+                <div id="task-days-select">
+                    <Calendar daysSelected={daysSelected} setDaysSelected={setDaysSelected}/>
+                </div>
+            )}
+            {mode === "specific_days" && (
+                <div>
+                    <p id="days-error" 
+                    style={{color: "red", fontSize: "14px"}} hidden={!isError}>
+                        Error: Please select at least one day.
+                    </p>
+                    <label htmlFor='specific-days' style={{fontSize: "16px"}}>
+                        Choose Day(s) to accomplish the habit: </label>
+                    <CheckBoxDay name="Monday" setDaysSelected={setDaysSelected}/>
+                    <CheckBoxDay name="Tuesday" setDaysSelected={setDaysSelected}/>
+                    <CheckBoxDay name="Wednesday" setDaysSelected={setDaysSelected}/>
+                    <CheckBoxDay name="Thursday" setDaysSelected={setDaysSelected}/>
+                    <CheckBoxDay name="Friday" setDaysSelected={setDaysSelected}/>
+                    <CheckBoxDay name="Saturday" setDaysSelected={setDaysSelected}/>
+                    <CheckBoxDay name="Sunday" setDaysSelected={setDaysSelected}/>
+                </div>
+            )}
+            {mode === "number_days" && (
+                <div>
+                    <label htmlFor='number-days' style={{fontSize: "16px"}}>
+                        Enter the number of days per week you want to accomplish this habit:
+                    </label>
+                    <input type="number" id="number-days" min="1" max="7" onChange={(e) => setNumOfDays(parseInt(e.target.value) || 1)} />
+                </div>
+            )}
+            {mode === "specific_month_number" && (
+                <div>
+                    <label htmlFor='number-month-days' style={{fontSize: "16px"}}>
+                        Enter the number of days per month you want to accomplish this habit:
+                    </label>
+                    <input type="number" id="number-month-days" min="1" max="31" onChange={(e) => setNumOfDays(parseInt(e.target.value) || 1)} />
+                </div>
+            )}
+        </div>
+    );
+}
+
 // BACKEND FUNCTIONALITIES SHOULD BE ADDED HERE!
 function CreateHabitForm(props) {
+    console.log("In CreateHabitForm:", props);
     const [clicked, setClicked] = useState(false);
+    const [taskDaysSelected, setTaskDaysSelected] = useState("everyday");
+    const [daysSelected, setDaysSelected] = useState([]);
+    const [numOfDays, setNumOfDays] = useState(0);
+    const [emoji, setEmoji] = useState(props.emoji || "📝");
     // Access the user from the AuthContext
     const user = useContext(AuthContext);
     console.log("Current user in CreateHabitForm:", user ? user.uid : null); // Debugging line
@@ -121,6 +230,13 @@ function CreateHabitForm(props) {
     const [habitType, setHabitType] = useState("Build");
     const [periodSelected, setPeriod] = useState("Day");
     const [color, setColor] = useState("#b9b7b7");
+
+
+    // When users are deciding task days, we need to refresh to 
+    // ensure data type consistency.
+    const refreshDays = () => {
+        setDaysSelected([]);
+    }
 
     const handleAddHabit = async (createdHabit) => {
         if (!user) return;
@@ -160,12 +276,14 @@ function CreateHabitForm(props) {
                 description: document.getElementById("habit-description").value,
                 type: habitType,
                 color: color,
+                emoji: emoji,
                 goal: {
                     value: document.getElementById("value").value,
                     unit: document.getElementById("unit").value,
                     period: periodSelected,
                     taskDays: document.getElementById("task-day").value,
-                    taskDaysSelected: document.getElementById("task-day-value") ? document.getElementById("task-day-value").value : null
+                    daysSelected: daysSelected,
+                    numOfDays: numOfDays
                 },
                 reminder: {
                     activated: document.getElementById("reminder-activated").checked,
@@ -192,6 +310,9 @@ function CreateHabitForm(props) {
                         <div id="habit-emoji" 
                         style={{backgroundColor: color, width: "10em", height: "10em", 
                         borderRadius: "50%"}}>
+                            <EmojiSelect value={emoji} onChange={(emoji) => {
+                                setEmoji(emoji);
+                            }}/>
                         </div>
                         <br />
                         <span>
@@ -273,6 +394,8 @@ function CreateHabitForm(props) {
                             <option value="gallons">gallons</option>
                             <option value="liters">liters</option>
                             <option value="pages">pages</option>
+                            <option value="words">words</option>
+                            <option value="dollars">dollars</option>
                             <option value="hours">hours</option>
                             <option value="minutes">minutes</option>
                         </select>
@@ -281,7 +404,8 @@ function CreateHabitForm(props) {
                     <br />
                     <div id="task-days">
                         <label style={{fontSize: "18px", textAlign: "center"}}>Task Days: </label>
-                        <select name = "task-day" id="task-day" style={{fontSize: "18px", textAlign: "center"}}>
+                        <select name = "task-day" id="task-day" 
+                        style={{fontSize: "18px", textAlign: "center"}} onChange={(e) => setTaskDaysSelected(e.target.value)}>
                             <option value="everyday">Everyday</option>
                             <option value="specific_days">Specific days of the week</option>
                             <option value="number_days">Number of days per week</option>
@@ -289,6 +413,12 @@ function CreateHabitForm(props) {
                             <option value="specific_month_number">Number of days per month</option>
                         </select>
                     </div>
+                    <SelectTaskDays 
+                    mode={taskDaysSelected}
+                    setClicked = {setClicked} 
+                    daysSelected = {daysSelected}
+                    setDaysSelected={setDaysSelected}
+                    setNumOfDays={setNumOfDays}/>
                 </div>
                 <hr style={{color: "#000000", width: "100%"}}/>
                 {/* Reminder Settings */}
@@ -336,7 +466,7 @@ function CreateHabitForm(props) {
                         </div>
                     </div>
                     <br />
-                    <button type="submit" id="submit-button" disabled={clicked}
+                    <button type="submit" id="submit-button1" disabled={clicked}
                     style={{backgroundColor: "#acacac", 
                     color: "black", fontWeight: "bold"}}>Create Habit</button>
                 </div>
@@ -352,6 +482,16 @@ function HabitCreate({addHabit}) {
     const [clicked, setClicked] = useState(false);
     const [category, setCategory] = useState("Popular");
     const [habitName, setHabitName] = useState("");
+    const [emoji, setEmoji] = useState("📝");
+
+    // Handle closing the popup and resetting all states to default
+    const handleClose = () => {
+        setCategory("Popular");
+        handleSelect(category);
+        setEmoji("📝");
+        setHabitName("");
+        showPopup(false);
+    }
 
     const handleClick = () => {
         handleSelect(category);
@@ -374,10 +514,11 @@ function HabitCreate({addHabit}) {
         <div>
             <div id = "popup-container">
                 <div id="popup">
-                    <div id="back-button" onClick={() => setCategory("Popular")} hidden={category !== "Custom"}>
+                    {/* Click the back button will refresh habit creating screen */}
+                    <div id="back-button" onClick={() => {setCategory("Popular"); setEmoji("📝"); setHabitName("")}} hidden={category !== "Custom"}>
                         <ChevronLeft size={36}/>
                         </div>
-                    <div id="close-button" onClick={handleClick}><X size={36}/></div>
+                    <div id="close-button" onClick={handleClose}><X size={36}/></div>
                     {/* It will switch between the habit creation and selection window
                     depending on whether custom was selected or button was clicked */}
                     {category !== "Custom" ? (
@@ -407,7 +548,9 @@ function HabitCreate({addHabit}) {
                                 </div>
                                 <HabitWindow viewing={category} 
                                 onSelectCustom={() => {setCategory("Custom")}}
-                                onSelectName={(name) => setHabitName(name)} />
+                                onSelectName={(name) => setHabitName(name)}
+                                onSelectEmoji={(emoji) => setEmoji(emoji)}
+                                 />
                             </div>
                         </div>
                     ) : (
@@ -417,9 +560,10 @@ function HabitCreate({addHabit}) {
                                 <div id="create-habit">
                                     <CreateHabitForm habitName={habitName} 
                                     onSubmission={() => {
-                                        setCategory("Popular"), 
+                                        setCategory("Popular"),
                                         handleClick()
                                         ;}}
+                                    emoji={emoji}
                                     setHabitName={setHabitName}
                                     addHabit = {addHabit}
                                     />

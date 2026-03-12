@@ -42,6 +42,7 @@ export const createHabit = async (uid, habit) => {
     name: habit.name,
     description: habit.description || "",
     color: habit.color || "#000000",
+    emoji: habit.emoji || "📝",
     type: habit.type || "General",
     goal: habit.goal || { value: 1, unit: "minute" },
     reminder: habit.reminder || { activated: false, time: "", message: "" },
