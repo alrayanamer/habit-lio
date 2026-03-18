@@ -15,6 +15,7 @@ export default function NewHabitForm({ uid, onClose }) {
   const [availableYears, setAvailableYears] = useState([new Date().getFullYear()]);
   const [barData, setBarData] = useState({ labels: [], datasets: [] });
   const [pieData, setPieData] = useState({ labels: [], datasets: [] });
+  const [highestStreak, setHighestStreak] = useState(0);
 
   const overlayStyle = { 
     position: 'fixed',
@@ -56,7 +57,6 @@ export default function NewHabitForm({ uid, onClose }) {
           
           const start = data.startDate?.toDate?.() || new Date(data.startDate);
           const end = data.endDate?.toDate?.() || new Date(data.endDate);
-
           if (start && end) {
             const startYear = start.getFullYear();
             const endYear = end.getFullYear();
@@ -65,7 +65,9 @@ export default function NewHabitForm({ uid, onClose }) {
             }
           }
         });
-
+        
+        const streaks = fetched.map(h => Number(h.streak) || 0);
+        setHighestStreak(streaks.length > 0 ? Math.max(...streaks) : 0);
         setHabitsData(fetched);
         setTotalHabits(fetched.length);
         setAvailableYears(Array.from(years).sort((a, b) => b - a));
@@ -103,7 +105,7 @@ export default function NewHabitForm({ uid, onClose }) {
         label: `Active Habits (${selectedYear})`,
         data: counts,
         backgroundColor: "rgba(75, 192, 192, 0.6)",
-        borderColor: "rgb(75, 192, 192)",
+        borderColor: "rgb(0, 0, 0)",
         borderWidth: 1
       }]
     });
@@ -129,6 +131,19 @@ export default function NewHabitForm({ uid, onClose }) {
           </div>
           <div style={{ height: '280px' }}>
             <Bar data={barData} options={{ maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }} />
+          </div>
+        </div>
+
+        <div style={{ borderRadius: '12px', padding: '20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '30px', border: '2px solid black' }}>
+          <div>
+            <p style={{ margin: '5px 0 0 0', fontSize: '18px', fontWeight: '500' }}>
+              Current Highest Streak
+            </p>
+          </div>
+          <div style={{ textAlign: 'right' }}>
+            <span style={{ fontSize: '42px', fontWeight: 'bold', lineHeight: '1' }}>
+              🔥{highestStreak}
+            </span>
           </div>
         </div>
 
