@@ -35,9 +35,18 @@ export const getUserProfile = async (uid) => {
   return snapshot.exists() ? { id: snapshot.id, ...snapshot.data() } : null;
 };
 
+
 // Create Habits
 export const createHabit = async (uid, habit) => {
   const habitsRef = collection(db, "users", uid, "habits");
+
+  // Clear days array based on task days mode that wasn't selected.
+  if(habit.goal.taskDays !== "specific_days") {
+    habit.goal.daysSelected = [];
+  } else if (habit.goal.taskDays !== "specific_month_days") {
+    habit.goal.daysInMonthSelected = [];
+  }
+
   const habitDoc = {
     name: habit.name,
     description: habit.description || "",
@@ -58,6 +67,26 @@ export const createHabit = async (uid, habit) => {
   };
 
   const docRef = await addDoc(habitsRef, habitDoc);
+  if (habit.reminder?.activated) {
+    const [hours, minutes] = habit.reminder.time.split(':');
+    const now = new Date();
+    const alarmTime = new Date();
+    alarmTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+
+    // If time already passed today, set for tomorrow
+    if (alarmTime <= now) {
+        alarmTime.setDate(now.getDate() + 1);
+    }
+
+    const stringifyName = docRef.id + "|" + habit.reminder.message 
+    + "|" + habit.name; // Combine message and habit name for later use
+    // Schedule repeating alarm every 24 hours
+    // Switch back to createdHabit.name if it doesn't work
+    chrome.alarms.create(stringifyName, {
+        when: alarmTime.getTime(),
+        periodInMinutes: 1440 // 24 hours
+    });
+  }
   return docRef;
 };
 
@@ -70,6 +99,16 @@ export const handleSaveHabit = async (user, updatedHabit) => {
     console.log("updatedHabit.id:", updatedHabit.id);
     const habitRef = doc(db, "users", user.uid, "habits", updatedHabit.id);
 
+    const stringifyName = updatedHabit.id + "|" + updatedHabit.reminder.message + "|" + updatedHabit.name; // Combine message and habit name for later use
+    chrome.alarms.clear(stringifyName); // Clear any associated alarms
+
+    // Clear days array based on task days mode that wasn't selected.
+    if(updatedHabit.goal.taskDays !== "specific_days") {
+      updatedHabit.goal.daysSelected = [];
+    } else if (updatedHabit.goal.taskDays !== "specific_month_days") {
+      updatedHabit.goal.daysInMonthSelected = [];
+    }
+
     await updateDoc(habitRef, {
       name: updatedHabit.name,
       description: updatedHabit.description || "",
@@ -81,13 +120,34 @@ export const handleSaveHabit = async (user, updatedHabit) => {
       priority: updatedHabit.priority || "none",
       startDate: updatedHabit.startDate || null,
       endDate: updatedHabit.endDate || null,
-      taskDays: updatedHabit.taskDays || "Everyday",
       isActive: updatedHabit.isActive ?? true,
       // Preserve streak data
       streak: updatedHabit.streak ?? 0,
       completions: updatedHabit.completions ?? [],
       lastCompletedDate: updatedHabit.lastCompletedDate ?? null,
     });
+
+    if (updatedHabit.reminder?.activated) {
+      const [hours, minutes] = updatedHabit.reminder.time.split(':');
+      const now = new Date();
+      const alarmTime = new Date();
+      alarmTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+
+      // If time already passed today, set for tomorrow
+      if (alarmTime <= now) {
+          alarmTime.setDate(now.getDate() + 1);
+      }
+
+      const stringifyName = habitRef.id + "|" + updatedHabit.reminder.message 
+      + "|" + updatedHabit.name; // Combine message and habit name for later use
+      // Schedule repeating alarm every 24 hours
+      // Switch back to createdHabit.name if it doesn't work
+      chrome.alarms.create(stringifyName, {
+          when: alarmTime.getTime(),
+          periodInMinutes: 1440 // 24 hours
+      });
+    }
+    
 
     // setHabits((prev) =>
     //   prev.map((habit) =>
@@ -121,8 +181,10 @@ export const updateHabit = async (uid, habitId, updates) => {
   });
 };
 
-export const deleteHabit = async (uid, habitId) => {
-  const habitRef = doc(db, "users", uid, "habits", habitId);
+export const deleteHabit = async (uid, habit) => {
+  const habitRef = doc(db, "users", uid, "habits", habit.id);
+  const stringifyName = habit.id + "|" + habit.reminder.message + "|" + habit.name; // Combine message and habit name for later use
+  chrome.alarms.clear(stringifyName); // Clear any associated alarms
   await deleteDoc(habitRef);
 };
 

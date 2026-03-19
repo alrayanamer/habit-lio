@@ -4,8 +4,7 @@ import "react-day-picker/dist/style.css";
 import "../css/calendar.css";
 
 // User will select days from the calendar to set the days of the month that they want to complete the habit on.
-function Calendar({daysInMonthSelected, setDaysInMonthSelected}) {
-  // const [selected, setSelected] = useState([]);
+function CalendarEdit(props) {
   
   return(
     <div style={{ padding: "20px" }}>
@@ -17,8 +16,9 @@ function Calendar({daysInMonthSelected, setDaysInMonthSelected}) {
         mode="multiple"
         captionLayout="dropdown"
         disabled={{ before: new Date() }}
-        selected={daysInMonthSelected}
-        onSelect={setDaysInMonthSelected}
+        selected={props.daysInMonthSelected}
+        onSelect={(e) => {props.setDaysInMonthSelected(e); 
+          props.updateGoalField("daysInMonthSelected", e)}}
         
         startMonth={new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate())}
         endMonth={new Date(2035, 6)} />
@@ -32,4 +32,4 @@ function Calendar({daysInMonthSelected, setDaysInMonthSelected}) {
   )
 }
 
-export default Calendar;
+export default CalendarEdit;

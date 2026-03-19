@@ -40,6 +40,14 @@ body {
     margin: 10px;
 }
 
+#emoji-color-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    /* gap: 10px; */
+}
+
 
 #habit-desc {
     gap: 5px;
@@ -190,9 +198,9 @@ input[type="number"]::-webkit-inner-spin-button {
 }
 
 
-#goal-info {
-    min-height: 190px;
-}
+/*#goal-info {
+    min-height: 190px; 
+}*/
 
 
 #goal-period {   
@@ -420,4 +428,30 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 #task-days,
 #select-time {
     font-size: 16px;
+}
+
+#task-days-select{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: transparent;
+}
+
+#Select-task-days{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 88%;
+}
+
+#save-btn:hover {
+    background-color: #acacac;
+}
+
+#save-btn:disabled {
+    background-color: #e0e0e0;
+    color: #a0a0a0;
+    cursor: not-allowed;
 }
