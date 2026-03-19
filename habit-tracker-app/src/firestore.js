@@ -35,9 +35,18 @@ export const getUserProfile = async (uid) => {
   return snapshot.exists() ? { id: snapshot.id, ...snapshot.data() } : null;
 };
 
+
 // Create Habits
 export const createHabit = async (uid, habit) => {
   const habitsRef = collection(db, "users", uid, "habits");
+
+  // Clear days array based on task days mode that wasn't selected.
+  if(habit.goal.taskDays !== "specific_days") {
+    habit.goal.daysSelected = [];
+  } else if (habit.goal.taskDays !== "specific_month_days") {
+    habit.goal.daysInMonthSelected = [];
+  }
+
   const habitDoc = {
     name: habit.name,
     description: habit.description || "",
@@ -92,6 +101,13 @@ export const handleSaveHabit = async (user, updatedHabit) => {
 
     const stringifyName = updatedHabit.id + "|" + updatedHabit.reminder.message + "|" + updatedHabit.name; // Combine message and habit name for later use
     chrome.alarms.clear(stringifyName); // Clear any associated alarms
+
+    // Clear days array based on task days mode that wasn't selected.
+    if(updatedHabit.goal.taskDays !== "specific_days") {
+      updatedHabit.goal.daysSelected = [];
+    } else if (updatedHabit.goal.taskDays !== "specific_month_days") {
+      updatedHabit.goal.daysInMonthSelected = [];
+    }
 
     await updateDoc(habitRef, {
       name: updatedHabit.name,

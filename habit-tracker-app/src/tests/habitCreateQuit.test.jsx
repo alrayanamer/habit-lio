@@ -182,7 +182,8 @@ describe('HabitCreate Component', () => {
                     unit: 'steps', 
                     taskDays: 'everyday',
                     numOfDays: 0,
-                    daysSelected: []
+                    daysSelected: [],
+                    daysInMonthSelected: []
                 },
                 priority: "none",
                 reminder: {
@@ -252,7 +253,8 @@ describe('HabitCreate Component', () => {
                     unit: 'steps', 
                     taskDays: 'everyday',
                     numOfDays: 0,
-                    daysSelected: []
+                    daysSelected: [],
+                    daysInMonthSelected: []
                 },
                 priority: "none",
                 reminder: {
@@ -334,7 +336,8 @@ describe('HabitCreate Component', () => {
                     unit: 'steps', 
                     taskDays: 'everyday',
                     numOfDays: 0,
-                    daysSelected: []
+                    daysSelected: [],
+                    daysInMonthSelected: []
                 },
                 priority: "none",
                 reminder: {
@@ -418,7 +421,8 @@ describe('HabitCreate Component', () => {
                     unit: 'steps', 
                     taskDays: 'everyday',
                     numOfDays: 0,
-                    daysSelected: []
+                    daysSelected: [],
+                    daysInMonthSelected: []
                 },
                 priority: "high",
                 reminder: {

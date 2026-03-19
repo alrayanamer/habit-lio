@@ -166,49 +166,58 @@ function CheckBoxDay({ name, setDaysSelected }) {
 }
 
 
-function SelectTaskDays({mode, setClicked, daysSelected, setDaysSelected, setNumOfDays}) {
+function SelectTaskDays(props) {
     // const [error, showError] = useState(false);
-    const isError = daysSelected.length === 0;
-    setClicked(mode === "specific_days" && isError);
-    console.log("DAYS:" + daysSelected);
+    const isError = props.daysSelected.length === 0;
+    props.setClicked(props.mode === "specific_days" && isError);
+
+    const isError2 = props.daysInMonthSelected.length === 0;
+    props.setClicked(props.mode === "specific_month_days" && isError2);
+    
+    console.log("DAYS:" + props.daysSelected);
     return(
         <div>
-            {mode === "specific_month_days" && (
+            {props.mode === "specific_month_days" && (
                 <div id="task-days-select">
-                    <Calendar daysSelected={daysSelected} setDaysSelected={setDaysSelected}/>
+                    <p className="days-error" 
+                    style={{color: "red", fontSize: "14px"}} hidden={!isError2}>
+                        Error: Please select at least one day.
+                    </p>
+                    <Calendar daysInMonthSelected={props.daysInMonthSelected} 
+                    setDaysInMonthSelected={props.setDaysInMonthSelected}/>
                 </div>
             )}
-            {mode === "specific_days" && (
+            {props.mode === "specific_days" && (
                 <div>
-                    <p id="days-error" 
+                    <p className="days-error" 
                     style={{color: "red", fontSize: "14px"}} hidden={!isError}>
                         Error: Please select at least one day.
                     </p>
                     <label htmlFor='specific-days' style={{fontSize: "16px"}}>
                         Choose Day(s) to accomplish the habit: </label>
-                    <CheckBoxDay name="Monday" setDaysSelected={setDaysSelected}/>
-                    <CheckBoxDay name="Tuesday" setDaysSelected={setDaysSelected}/>
-                    <CheckBoxDay name="Wednesday" setDaysSelected={setDaysSelected}/>
-                    <CheckBoxDay name="Thursday" setDaysSelected={setDaysSelected}/>
-                    <CheckBoxDay name="Friday" setDaysSelected={setDaysSelected}/>
-                    <CheckBoxDay name="Saturday" setDaysSelected={setDaysSelected}/>
-                    <CheckBoxDay name="Sunday" setDaysSelected={setDaysSelected}/>
+                    <CheckBoxDay name="Monday" setDaysSelected={props.setDaysSelected}/>
+                    <CheckBoxDay name="Tuesday" setDaysSelected={props.setDaysSelected}/>
+                    <CheckBoxDay name="Wednesday" setDaysSelected={props.setDaysSelected}/>
+                    <CheckBoxDay name="Thursday" setDaysSelected={props.setDaysSelected}/>
+                    <CheckBoxDay name="Friday" setDaysSelected={props.setDaysSelected}/>
+                    <CheckBoxDay name="Saturday" setDaysSelected={props.setDaysSelected}/>
+                    <CheckBoxDay name="Sunday" setDaysSelected={props.setDaysSelected}/>
                 </div>
             )}
-            {mode === "number_days" && (
+            {props.mode === "number_days" && (
                 <div>
                     <label htmlFor='number-days' style={{fontSize: "16px"}}>
                         Enter the number of days per week you want to accomplish this habit:
                     </label>
-                    <input type="number" id="number-days" min="1" max="7" onChange={(e) => setNumOfDays(parseInt(e.target.value) || 1)} />
+                    <input type="number" id="number-days" min="1" max="7" onChange={(e) => props.setNumOfDays(parseInt(e.target.value) || 1)} />
                 </div>
             )}
-            {mode === "specific_month_number" && (
+            {props.mode === "specific_month_number" && (
                 <div>
                     <label htmlFor='number-month-days' style={{fontSize: "16px"}}>
                         Enter the number of days per month you want to accomplish this habit:
                     </label>
-                    <input type="number" id="number-month-days" min="1" max="31" onChange={(e) => setNumOfDays(parseInt(e.target.value) || 1)} />
+                    <input type="number" id="number-month-days" min="1" max="31" onChange={(e) => props.setNumOfDays(parseInt(e.target.value) || 1)} />
                 </div>
             )}
         </div>
@@ -221,6 +230,7 @@ function CreateHabitForm(props) {
     const [clicked, setClicked] = useState(false);
     const [taskDaysSelected, setTaskDaysSelected] = useState("everyday");
     const [daysSelected, setDaysSelected] = useState([]);
+    const [daysInMonthSelected, setDaysInMonthSelected] = useState([]);
     const [numOfDays, setNumOfDays] = useState(0);
     const [emoji, setEmoji] = useState(props.emoji || "📝");
     // Access the user from the AuthContext
@@ -284,8 +294,10 @@ function CreateHabitForm(props) {
                     unit: document.getElementById("unit").value,
                     period: periodSelected,
                     taskDays: document.getElementById("task-day").value,
-                    // Days Selected are the days selected out of a week or month
+                    // Days Selected are the days selected out of a week
                     daysSelected: daysSelected,
+                    // 
+                    daysInMonthSelected: daysInMonthSelected,
                     // Number of days selected out of a week or month.
                     numOfDays: numOfDays
                 },
@@ -427,6 +439,8 @@ function CreateHabitForm(props) {
                     setClicked = {setClicked} 
                     daysSelected = {daysSelected}
                     setDaysSelected={setDaysSelected}
+                    daysInMonthSelected={daysInMonthSelected}
+                    setDaysInMonthSelected={setDaysInMonthSelected}
                     setNumOfDays={setNumOfDays}/>
                 </div>
                 <hr style={{color: "#000000", width: "100%"}}/>
@@ -477,7 +491,9 @@ function CreateHabitForm(props) {
                         </div>
                     </div>
                     <br />
-                    <button type="submit" id="submit-button1" disabled={clicked}
+                    <button type="submit" id="submit-button1" 
+                    title={clicked ? "Please fill in all required fields" : "Create Habit"}
+                    disabled={clicked}
                     style={{backgroundColor: "#acacac", 
                     color: "black", fontWeight: "bold"}}>Create Habit</button>
                 </div>

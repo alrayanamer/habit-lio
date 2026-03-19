@@ -169,92 +169,110 @@ function CheckBoxDay({ name, setDaysSelected, daysSelected, updateGoalField }) {
 // based on the selected mode in the goal info section of habit details. 
 // It conditionally renders different UI elements for selecting specific days of the week, 
 // specific days of the month, or entering a number of days per week/month.
-function SelectTaskDays({mode, setClicked, 
-    daysSelected, setDaysSelected, setNumOfDays, updateGoalField}) {
-    // const [error, showError] = useState(false);
-    const isError = daysSelected.length === 0;
-    setClicked(mode === "specific_days" && isError);
+function SelectTaskDays(props) {
+
+    const isError = props.daysSelected.length === 0;
+    props.setDisabled(props.mode === "specific_days" && isError);
+
+    const isError2 = props.daysInMonthSelected.length === 0;
+    props.setDisabled(props.mode === "specific_month_days" && isError2);
     // Ensure days selected is refresh.
-    // const refreshNeeded = mode === "specific_month_days" && daysSelected.length > 0;
-    // setDaysSelected(refreshNeeded ? [] : daysSelected);
-    console.log("DAYS:" + daysSelected);
+    // const refreshNeeded = props.mode === "specific_month_days" && props.daysSelected.length > 0;
+    // props.setDaysSelected(refreshNeeded ? [] : props.daysSelected);
+    console.log("DAYS:" + props.daysSelected);
     return(
         <div>
-            {mode === "specific_month_days" && (
+            {props.mode === "specific_month_days" && (
                 <div id="task-days-select">
-                    <CalendarEdit daysSelected={daysSelected} 
-                    setDaysSelected={setDaysSelected}
-                    updateGoalField={updateGoalField}/>
+                    <p className="days-error" 
+                    style={{color: "red", fontSize: "14px"}} hidden={!isError2}>
+                        Error: Please select at least one day.
+                    </p>
+                    <CalendarEdit daysInMonthSelected={props.daysInMonthSelected} 
+                    setDaysInMonthSelected={props.setDaysInMonthSelected}
+                    updateGoalField={props.updateGoalField}/>
                 </div>
             )}
-            {mode === "specific_days" && (
+            {props.mode === "specific_days" && (
                 <div>
-                    <p id="days-error" 
+                    <p className="days-error" 
                     style={{color: "red", fontSize: "14px"}} hidden={!isError}>
                         Error: Please select at least one day.
                     </p>
                     <label htmlFor='specific-days' style={{fontSize: "16px"}}>
                         Choose Day(s) to accomplish the habit: </label>
                     <CheckBoxDay name="Monday" 
-                    setDaysSelected={setDaysSelected} 
-                    daysSelected={daysSelected} updateGoalField={updateGoalField}/>
+                    setDaysSelected={props.setDaysSelected} 
+                    daysSelected={props.daysSelected} updateGoalField={props.updateGoalField}/>
 
-                    <CheckBoxDay name="Tuesday" setDaysSelected={setDaysSelected} 
-                    daysSelected={daysSelected} updateGoalField={updateGoalField}/>
+                    <CheckBoxDay name="Tuesday" setDaysSelected={props.setDaysSelected} 
+                    daysSelected={props.daysSelected} updateGoalField={props.updateGoalField}/>
 
-                    <CheckBoxDay name="Wednesday" setDaysSelected={setDaysSelected} 
-                    daysSelected={daysSelected} updateGoalField={updateGoalField}/>
+                    <CheckBoxDay name="Wednesday" setDaysSelected={props.setDaysSelected} 
+                    daysSelected={props.daysSelected} updateGoalField={props.updateGoalField}/>
 
-                    <CheckBoxDay name="Thursday" setDaysSelected={setDaysSelected} 
-                    daysSelected={daysSelected} updateGoalField={updateGoalField}/>
+                    <CheckBoxDay name="Thursday" setDaysSelected={props.setDaysSelected} 
+                    daysSelected={props.daysSelected} updateGoalField={props.updateGoalField}/>
 
-                    <CheckBoxDay name="Friday" setDaysSelected={setDaysSelected} 
-                    daysSelected={daysSelected} updateGoalField={updateGoalField}/>
+                    <CheckBoxDay name="Friday" setDaysSelected={props.setDaysSelected} 
+                    daysSelected={props.daysSelected} updateGoalField={props.updateGoalField}/>
 
-                    <CheckBoxDay name="Saturday" setDaysSelected={setDaysSelected} 
-                    daysSelected={daysSelected} updateGoalField={updateGoalField}/>
+                    <CheckBoxDay name="Saturday" setDaysSelected={props.setDaysSelected} 
+                    daysSelected={props.daysSelected} updateGoalField={props.updateGoalField}/>
 
-                    <CheckBoxDay name="Sunday" setDaysSelected={setDaysSelected} 
-                    daysSelected={daysSelected} updateGoalField={updateGoalField}/>
+                    <CheckBoxDay name="Sunday" setDaysSelected={props.setDaysSelected} 
+                    daysSelected={props.daysSelected} updateGoalField={props.updateGoalField}/>
                 </div>
             )}
-            {mode === "number_days" && (
+            {props.mode === "number_days" && (
                 <div>
                     <label htmlFor='number-days' style={{fontSize: "16px"}}>
                         Enter the number of days per week you want to accomplish this habit:
                     </label>
-                    <input type="number" id="number-days" min="1" max="7" onChange={(e) => setNumOfDays(parseInt(e.target.value) || 1)} />
+                    <input type="number" id="number-days" 
+                    min="1" max="7" 
+                    value={props.numOfDays}
+                    onChange={(e) => {
+                        props.setNumOfDays(parseInt(e.target.value) || 1)
+                        props.updateGoalField("numOfDays", parseInt(e.target.value) || 1);
+                        }} />
                 </div>
             )}
-            {mode === "specific_month_number" && (
+            {props.mode === "specific_month_number" && (
                 <div>
                     <label htmlFor='number-month-days' style={{fontSize: "16px"}}>
                         Enter the number of days per month you want to accomplish this habit:
                     </label>
-                    <input type="number" id="number-month-days" min="1" max="31" onChange={(e) => setNumOfDays(parseInt(e.target.value) || 1)} />
+                    <input type="number" id="number-month-days" min="1" max="31" 
+                    value={props.numOfDays}
+                    onChange={(e) => {
+                        props.setNumOfDays(parseInt(e.target.value) || 1)
+                        props.updateGoalField("numOfDays", parseInt(e.target.value) || 1);
+                        }} />
                 </div>
             )}
         </div>
     );
 }
 
-function GoalInfo({ habit, updateGoalField }) {
+function GoalInfo({ habit, updateGoalField, setDisabled }) {
     const [clicked, setClicked] = useState(false);
     const [taskDaysSelected, setTaskDaysSelected] 
     = useState(habit.goal?.taskDays ?? "everyday");
     const [daysSelected, setDaysSelected] = useState(habit.goal?.daysSelected ?? []);
+    const [daysInMonthSelected, setDaysInMonthSelected] = useState(habit.goal?.daysInMonthSelected ?? []);
     const [numOfDays, setNumOfDays] = useState(habit.goal?.numOfDays ?? 1);
 
-    const firstItem = daysSelected[0];
+    const firstItem = daysInMonthSelected[0];
 
     // only convert if the dates are timestamps.
     if (firstItem && typeof firstItem === 'object' && 'seconds' in firstItem) {
-        const formattedDates = habit.goal?.daysSelected?.map(timestamp => timestamp.toDate());
-        setDaysSelected(formattedDates);
+        const formattedDates = daysInMonthSelected.map(timestamp => timestamp.toDate());
+        setDaysInMonthSelected(formattedDates);
     }
     console.log("GOAL INFO HABIT:", habit);
     console.log("GOAL INFO TASK DAYS SELECTED:", taskDaysSelected);
-    console.log("GOAL INFO DAYS SELECTED:", daysSelected);
+    console.log("GOAL INFO DAYS IN MONTH SELECTED:", daysInMonthSelected);
     console.log("GOAL INFO NUM OF DAYS:", numOfDays);
     return (
         <div id="goal-info">
@@ -328,7 +346,11 @@ function GoalInfo({ habit, updateGoalField }) {
                     setClicked = {setClicked} 
                     daysSelected = {daysSelected}
                     setDaysSelected={setDaysSelected}
+                    numOfDays={numOfDays}
                     setNumOfDays={setNumOfDays}
+                    daysInMonthSelected={daysInMonthSelected}
+                    setDaysInMonthSelected={setDaysInMonthSelected}
+                    setDisabled={setDisabled}
                     updateGoalField = {updateGoalField}/>
             </div>
         </div>
@@ -436,6 +458,7 @@ function Line({ isItHidden }) {
 function HabitDetails({ habit, uid, onClose, loadHabits }) {
     const user  = useContext(AuthContext);
     const [editedHabit, setEditedHabit] = useState(habit);
+    const [disabled, setDisabled] = useState(false);
     console.log("AuthContext user:", user);
 
     // console.log("handleSaveHabit uid:", uid);
@@ -520,6 +543,7 @@ function HabitDetails({ habit, uid, onClose, loadHabits }) {
             <GoalInfo
                 habit={editedHabit}
                 updateGoalField={updateGoalField}
+                setDisabled={setDisabled}
             />
 
             <span className="details-name">Reminder Settings</span>
@@ -534,7 +558,10 @@ function HabitDetails({ habit, uid, onClose, loadHabits }) {
                 updateHabitField={updateHabitField}
             />
 
-            <button id="save-btn" onClick={handleSave}>
+            <button id="save-btn"
+            style={{color: "black", fontWeight: "bold"}}
+            title={disabled ? "Please fix the errors above" : "Save changes"} 
+            onClick={handleSave} disabled={disabled}>
                 Save Changes
             </button>
             <br />
