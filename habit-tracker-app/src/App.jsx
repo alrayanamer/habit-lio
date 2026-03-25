@@ -36,6 +36,7 @@ function App() {
   const [isSignUp, setIsSignUp] = useState(true);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [alreadyOnboarded, setAlreadyOnboarded] = useState(false);
 
   // Load in the habits for the user,
   // called after login and after edits/deletes to refresh the habit list
@@ -124,22 +125,6 @@ function App() {
     }
   };
 
-  // const handleAddHabit = async () => {
-  //     if (!newHabitTitle.trim() || !user) return;
-
-  //     setLoading(true);
-  //     try {
-  //         await createHabit(user.uid, { title: newHabitTitle });
-  //         setNewHabitTitle("");
-  //         setIsModalOpen(false);
-  //         await loadHabits(user.uid);
-  //     } catch (error) {
-  //         console.error("Error creating habit:", error);
-  //     } finally {
-  //         setLoading(false);
-  //     }
-  // };
-
   const handleAddStandardHabit = async (title) => {
     setLoading(true);
     try {
@@ -184,8 +169,8 @@ function App() {
     // home page after login
     <AuthContext.Provider value={user}>
       <div className="card">
-        {/* <h1>Habit-lio</h1> */}
         {user ? (
+          // Check if user is onboarded, if not show onboarding popup
           <div>
             { selectedHabit ? (<HabitDetails
                 habit={selectedHabit}

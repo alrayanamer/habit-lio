@@ -9,7 +9,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         login: resolve(__dirname, "login.html"),
-        signup: resolve(__dirname, "signup.html"),
+        onboarding: resolve(__dirname, "onboarding.html"),
         home: resolve(__dirname, "home.html"),
       },
     },
