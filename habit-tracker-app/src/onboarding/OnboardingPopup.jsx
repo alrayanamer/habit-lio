@@ -22,15 +22,33 @@ function Page1({currentPage, setCurrentPage}){
     )
 }
 
-function Page2({currentPage, setCurrentPage}){
+function Page2({currentPage, setCurrentPage, setUserInfo}){
     const [pageName, setPageName] = useState("Page2");
+    const [firstName, setFirstName] = useState("");
     console.log("current page should be 2: ", currentPage !== pageName);
     return(
-        <div hidden = {currentPage !== pageName}>
+        <div className="onboarding-wrapper" hidden = {currentPage !== pageName}>
         <div className = "onboarding-content">
             <h1>Who are you?</h1>
             <p>Let us know a bit about yourself to personalize your experience.</p>
-            <button className="continue-btn" 
+            <label htmlFor="first-name">First Name or Nickname (Optional)</label>
+            <input type="text" id="first-name" name="first-name" 
+            placeholder="First Name" aria-label="First Name" 
+            onChange={(e) => {
+                setUserInfo((prevUserInfo) => ({...prevUserInfo, firstName: e.target.value}));
+                setFirstName(e.target.value);
+            }}/>
+            <label htmlFor="last-name">Last Name (Optional)</label>
+            <input type="text" id="last-name" name="last-name" placeholder="Last Name" aria-label="Last Name"
+            onChange={(e) => setUserInfo((prevUserInfo) => ({...prevUserInfo, lastName: e.target.value}))}/>
+            <label htmlFor="username">Create a Username (Optional)</label>
+            <input type="text" id="username" name="username" placeholder="Username" aria-label="Username"
+            onChange={(e) => setUserInfo((prevUserInfo) => ({...prevUserInfo, username: e.target.value}))}/>
+            <label htmlFor="greet-username">Greeting by Username?</label>
+            <input type="checkbox" id="greet-username" 
+            name="greet-username" aria-label="Greeting by Username"
+            onChange={(e) => setUserInfo((prevUserInfo) => ({...prevUserInfo, greetUsername: e.target.checked}))}/>
+            <button className="continue-btn"
             onClick={() => setCurrentPage("Page3")} >Continue</button>
         </div>
         </div>
@@ -38,6 +56,12 @@ function Page2({currentPage, setCurrentPage}){
 }
 
 function OnboardingPopup(props) {
+    const [userInfo, setUserInfo] = useState({
+        firstName: "",
+        lastName: "",
+        username: "",
+        greetUsername: false
+    });
     const [showPopup, setShowPopup] = useState(false);
     const [currentPage, setCurrentPage] = useState("Page1");
     // console.log("props in onboarding popup: ", props);
@@ -76,8 +100,13 @@ function OnboardingPopup(props) {
                             : "rgba(145, 145, 145, 0.5)"}}></div>
                         </div>
                     </div>
-                    < Page1 currentPage={currentPage} setCurrentPage={setCurrentPage} />
-                    < Page2 currentPage={currentPage} setCurrentPage={setCurrentPage} />
+                    < Page1 currentPage={currentPage} 
+                    setCurrentPage={setCurrentPage} 
+                    setUserInfo={setUserInfo}/>
+
+                    < Page2 currentPage={currentPage} 
+                    setCurrentPage={setCurrentPage} 
+                    setUserInfo={setUserInfo} />
                 </div>
             </div>
         </div>
