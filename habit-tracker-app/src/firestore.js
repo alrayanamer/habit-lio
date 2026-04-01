@@ -367,3 +367,32 @@ export const saveOnboardingStatus = async (uid, status) => {
   const userRef = doc(db, "users", uid);
   await updateDoc(userRef, { alreadyOnboarded: status });
 }
+
+export const saveUserInfo = async (uid, userInfo) => {
+  const userRef = doc(db, "users", uid);
+  await updateDoc(userRef, { userInfo: userInfo });
+  window.location.reload();
+}
+
+export const getUserInfo = async (uid, specificItem) => {
+  const userRef = doc(db, "users", uid);
+  const snapshot = await getDoc(userRef);
+  if (!snapshot.exists()) return null;
+  const userInfo = snapshot.data().userInfo;
+  if (specificItem === "username") {
+    if(userInfo["greetUsername"]){
+      return userInfo[specificItem];
+    } else{
+      return "";
+    }
+  }
+  return specificItem ? userInfo[specificItem] : userInfo;
+};
+
+export const checkUsernameExists = async (username) => {
+  const usersRef = collection(db, "users");
+  const q = query(usersRef);
+  const snapshot = await getDocs(q);
+  const allUsernames = snapshot.docs.map(doc => doc.data().userInfo?.username).filter(Boolean);
+  return allUsernames.includes(username) ? true : false;
+}

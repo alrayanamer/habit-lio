@@ -1,7 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 
 // import "../App.css";
 import "../css/Onboarding.css";
+
+import { saveOnboardingStatus, saveUserInfo, checkUsernameExists} from "../firestore.js";
 
 function Page1({currentPage, setCurrentPage}){
     const [pageName, setPageName] = useState("Page1");
@@ -24,32 +26,44 @@ function Page1({currentPage, setCurrentPage}){
 
 function Page2({currentPage, setCurrentPage, setUserInfo}){
     const [pageName, setPageName] = useState("Page2");
-    const [firstName, setFirstName] = useState("");
+    const [username, setUsername] = useState("");
+    const [error, setError] = useState("");
     // console.log("current page should be 2: ", currentPage !== pageName);
+    const checkUsername = (username) => {
+        return (username.length > 0 && username.length <= 20 ) 
+        && username.trim().length !== 0;
+    }
+
+    const usernameExists = async (username) => {
+        const exists = await checkUsernameExists(username);
+        if (exists) {
+            setError("Username already exists.");
+        } else {
+            setCurrentPage("Page3");
+        }
+        return exists;
+    };
+
+
     return(
         <div className="onboarding-wrapper" hidden = {currentPage !== pageName}>
         <div className = "onboarding-content">
             <h1>Who are you?</h1>
             <p>Let us know a bit about yourself to personalize your experience.</p>
-            <label htmlFor="first-name">First Name or Nickname (Optional)</label>
-            <input type="text" id="first-name" name="first-name" 
-            placeholder="First Name" aria-label="First Name" 
-            onChange={(e) => {
-                setUserInfo((prevUserInfo) => ({...prevUserInfo, firstName: e.target.value}));
-                setFirstName(e.target.value);
-            }}/>
-            <label htmlFor="last-name">Last Name (Optional)</label>
-            <input type="text" id="last-name" name="last-name" placeholder="Last Name" aria-label="Last Name"
-            onChange={(e) => setUserInfo((prevUserInfo) => ({...prevUserInfo, lastName: e.target.value}))}/>
-            <label htmlFor="username">Create a Username (Optional)</label>
-            <input type="text" id="username" name="username" placeholder="Username" aria-label="Username"
-            onChange={(e) => setUserInfo((prevUserInfo) => ({...prevUserInfo, username: e.target.value}))}/>
+
+            <p style={{ color: "red" }}>{error}</p>
+            <label htmlFor="username" className="required">Create a Username</label>
+            <input type="text" id="username" name="username" 
+            placeholder="Username" aria-label="Username" maxlength="20"
+            onChange={(e) => {setUserInfo((prevUserInfo) => ({...prevUserInfo, username: e.target.value})); setUsername(e.target.value)}}/>
+            
             <label htmlFor="greet-username">Greeting by Username?</label>
             <input type="checkbox" id="greet-username" 
             name="greet-username" aria-label="Greeting by Username"
             onChange={(e) => setUserInfo((prevUserInfo) => ({...prevUserInfo, greetUsername: e.target.checked}))}/>
-            <button className="continue-btn"
-            onClick={() => setCurrentPage("Page3")} >Continue</button>
+            <br />
+            <button className="continue-btn" name="Continue" disabled={!checkUsername(username)}
+            onClick={async() => {usernameExists(username)}} >Continue</button>
         </div>
         </div>
     )
@@ -57,7 +71,7 @@ function Page2({currentPage, setCurrentPage, setUserInfo}){
 
 function Page3({currentPage, setCurrentPage}){
     const [pageName, setPageName] = useState("Page3");
-    console.log("current page should be 3: ", currentPage !== pageName);
+    // console.log("current page should be 3: ", currentPage !== pageName);
     // var fileInputRef = document.getElementById("profile-picture");
     // // Erase the file selected if users decide to click "upload file after uploading"
 
@@ -82,7 +96,7 @@ function Page3({currentPage, setCurrentPage}){
 function Page4({currentPage, setCurrentPage, setUserInfo}){
     const [pageName, setPageName] = useState("Page4");
     const [habitGoal, setHabitGoal] = useState("build");
-    console.log("current page should be 4: ", currentPage !== pageName);
+    // console.log("current page should be 4: ", currentPage !== pageName);
     return(
         <div className="onboarding-wrapper" hidden = {currentPage !== pageName}>
         <div className = "onboarding-content">
@@ -185,7 +199,7 @@ function Page6({currentPage, setCurrentPage}){
                     <br />
                     <br />
                     {/* In this button, we will handle the submission of the onboarding form */}
-                    {/* <button className="continue-btn" onClick={() => setCurrentPage("Page1")} >Finish</button> */}
+                    <button className="continue-btn" name="Let's Go!" onClick={() => setCurrentPage("Page7")} >Let's Go!</button>
                 </div>
             </div>
         </div>
@@ -193,9 +207,9 @@ function Page6({currentPage, setCurrentPage}){
 }
 
 function OnboardingPopup(props) {
+    console.log("DEBUG: OnboardingPopup received user:", props.user);
+    const user = props.user;
     const [userInfo, setUserInfo] = useState({
-        firstName: "",
-        lastName: "",
         username: "",
         greetUsername: false,
         habitGoal: "",
@@ -205,11 +219,23 @@ function OnboardingPopup(props) {
     const [currentPage, setCurrentPage] = useState("Page1");
     // console.log("props in onboarding popup: ", props);
     // console.log("props.hidden: ", props.props.hidden);
+    useEffect(() => {
+        if (currentPage === "Page7" && user) {
+            // Here, we will handle the submission of the onboarding form and send the userInfo to the backend.
+            // For now, we will just log the userInfo to the console.
+            // console.log("User Info: ", userInfo);
+            // console.log("User in effect: ", user);
+            saveOnboardingStatus(user.uid, true);
+            saveUserInfo(user.uid, userInfo);
+            props.setAlreadyOnboarded(true);
+            // setShowPopup(false);
+        }
+    }, [currentPage, userInfo, user]);
 
     return(
         <div>
             <div id="onboarding-container" style={
-                {display: props.props.hidden ? "none" : "block"}}>
+                {display: props.hidden ? "none" : "block"}}>
                 <div id="onboarding">
                     <div style={{display: "flex", flexDirection: "column", alignItems: "center"}}>
                         <div id="dots-container">

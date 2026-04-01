@@ -3,13 +3,14 @@ import OnboardingPopup from "./OnboardingPopup.jsx";
 // import "../App.css";
 
 
-function Onboarding(props) {
+function Onboarding({hidden, user, setAlreadyOnboarded}) {
     // const [showPopup, setShowPopup] = useState(false);
-    console.log("props: ", props);
+    // console.log("props: ", props);
 
     return(
         <div>
-            <OnboardingPopup props={props}/>
+            <OnboardingPopup hidden={hidden} 
+            user={user} setAlreadyOnboarded={setAlreadyOnboarded}/>
         </div>
     )
 }

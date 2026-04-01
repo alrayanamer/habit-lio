@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import {
   GoogleAuthProvider,
   signInWithCredential,
@@ -12,7 +12,8 @@ import {
   listHabits,
   createHabit,
   deleteHabit,
-  getOnboardingStatus
+  getOnboardingStatus,
+  getUserInfo
 } from "./firestore";
 import "./App.css";
 import "./Login.css";
@@ -34,6 +35,9 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("");
+  const [greetUsername, setGreetUsername] = useState(false);
+
   const [error, setAuthError] = useState(null);
   const [isSignUp, setIsSignUp] = useState(true);
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -43,9 +47,19 @@ function App() {
   // Load in the habits for the user,
   // called after login and after edits/deletes to refresh the habit list
   const loadHabits = async (uid) => {
+    if (!uid) return;
     try {
       const userHabits = await listHabits(uid);
       setHabits(userHabits);
+
+      const alreadyOnboarded = await getOnboardingStatus(uid);
+      // console.log("Already onboarded: ", alreadyOnboarded);
+      setAlreadyOnboarded(alreadyOnboarded);
+
+      const getUsername =  await getUserInfo(uid, "username");
+      setUsername(getUsername);
+      const getGreetUsername = await getUserInfo(uid, "greetUsername");
+      setGreetUsername(getGreetUsername);
     } catch (error) {
       console.error("Error loading habits:", error);
     }
@@ -57,22 +71,35 @@ function App() {
       setUser(currentUser);
       if (currentUser) {
         loadHabits(currentUser.uid);
+        // console.log("Username set: ", username);
       } else {
         setHabits([]);
       }
     });
 
-    const checkOnboardingStatus = async (user) => {
-      try {
-        const alreadyOnboarded = await getOnboardingStatus(user.uid);
-        setAlreadyOnboarded(alreadyOnboarded);
-      } catch (error) {
-        console.error("Error checking onboarding status:", error);
-      }
-    };
-
-    return () => {unsubscribe(); checkOnboardingStatus(user);};
+    return () => {unsubscribe();};
   }, []);
+
+  useEffect(() => {
+  const checkOnboardingStatus = async () => {
+    // 1. Safety check: if no user is logged in yet, stop here.
+    if (!user?.uid) return;
+
+    try {
+      const status = await getOnboardingStatus(user.uid);
+      // console.log("Already onboarded: ", status);
+      setAlreadyOnboarded(status);
+    } catch (error) {
+      console.error("Error checking onboarding status:", error);
+    }
+  };
+
+  // 2. Run the function normally (not in the return/cleanup)
+  checkOnboardingStatus();
+
+  // 3. Dependency should be [user], not [alreadyOnboarded]
+  // This means "Re-check status whenever the logged-in user changes"
+}, [user]); 
 
   const handleGoogleAuth = () => {
     chrome.identity.clearAllCachedAuthTokens(() => {
@@ -113,7 +140,15 @@ function App() {
         setAuthError(""); // clear error
       } else {
         // SIGN UP
-        await createUserWithEmailAndPassword(auth, email, password);
+        const result = await createUserWithEmailAndPassword(auth, email, password);
+
+        // CREATE THE FIRESTORE DOCUMENT
+        await createUserProfile(result.user.uid, {
+          email: result.user.email,
+          displayName: "", // You can update this later in onboarding
+          onboarded: false // Set initial onboarding status
+        });
+
         setAuthError("");
       }
     } catch (err) {
@@ -183,7 +218,10 @@ function App() {
       <div className="card">
         {user ? (
           <div>
-              <Onboarding hidden={alreadyOnboarded} />
+            { !alreadyOnboarded &&
+              <Onboarding hidden={alreadyOnboarded} user={user} 
+              setAlreadyOnboarded={setAlreadyOnboarded} />
+           }
             { selectedHabit ? (<HabitDetails
                 habit={selectedHabit}
                 uid={user.uid}
@@ -198,8 +236,8 @@ function App() {
               uid={user.uid}
               habits={habits}
             />
-            <p>
-              Welcome, <strong>{user.email}</strong>!
+            <p style={{ fontSize: "36px", color: "black" }}>
+              Welcome, <strong>{greetUsername ? username : user?.email}</strong>!
             </p>
             
             <div>

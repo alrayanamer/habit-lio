@@ -26,7 +26,7 @@ describe('First Onboarding Page', () => {
   test("renders onboarding popup", async () => {
     const user = userEvent.setup();
     const hidden = false; 
-    render(<OnboardingPopup props = {hidden} />);
+    render(<OnboardingPopup hidden = {hidden} />);
     // The exact onboarding popup text should be present in the document.
     expect(await screen.findByText(/You must be new here./i)).toBeInTheDocument();
   })
@@ -47,12 +47,6 @@ describe('Second Onboarding Page', () => {
     // The exact onboarding popup text should be present in the document.
     expect(await screen.findByText(/Who are you?/i)).toBeInTheDocument();
 
-    // Make sure the first name and last name is being requested.
-    const firstName = await screen.findByLabelText(/First Name/i);
-    const lastName = await screen.findByLabelText(/Last Name/i);
-    expect(firstName).toBeInTheDocument();
-    expect(lastName).toBeInTheDocument();
-
     //Make sure the username is being requested
     const username = await screen.findByLabelText(/Create a Username/i);
     expect(username).toBeInTheDocument();
@@ -63,6 +57,34 @@ describe('Second Onboarding Page', () => {
 
   })
 
+  // Unit tests
+  // Test if username validation works correctly
+  test("username validation works correctly", async () => {
+    const user = userEvent.setup();
+    const hidden = false; 
+    render(<OnboardingPopup hidden = {hidden} />);
+    const continueButton = await screen.findByRole("button", { name: /Continue/i });
+    await user.click(continueButton);
+
+    // The exact onboarding popup text should be present in the document.
+    expect(await screen.findByText(/Who are you?/i)).toBeInTheDocument();
+
+    //Make sure the username is being requested
+    const username = await screen.findByLabelText(/Create a Username/i);
+    expect(username).toBeInTheDocument();
+
+    // Make sure the username by greeting
+    const usernameGreeting = await screen.findByLabelText("Greeting by Username?");
+    expect(usernameGreeting).toBeInTheDocument();
+
+    // Change the username input to valid username and check that continue button is enabled
+    // const input = screen.getByRole('textbox')
+    await user.type(username, 'validusername') // Simulates typing
+
+    const continueButton2 = await screen.findByRole("button", { name: /Continue/i });
+    expect(continueButton2).not.toBeDisabled();
+  });
+
 });
 
 // THIRD PAGE TESTS
@@ -72,9 +94,15 @@ describe('Third Onboarding Page', () => {
   test("renders onboarding popup", async () => {
     const user = userEvent.setup();
     const hidden = false; 
-    render(<OnboardingPopup props = {hidden} />);
+    render(<OnboardingPopup hidden = {hidden} />);
     const continueButton = await screen.findByRole("button", { name: /Continue/i });
     await user.click(continueButton);
+
+    const username = await screen.findByLabelText(/Create a Username/i);
+    expect(username).toBeInTheDocument();
+
+    // Change the username input to valid username and check that continue button is enabled
+    await user.type(username, 'validusername');
 
     const continueButton2 = await screen.findByRole("button", { name: /Continue/i });
     await user.click(continueButton2);
@@ -97,9 +125,15 @@ describe('Fourth Onboarding Page', () => {
   test("renders fourth page of onboarding popup", async () => {
     const user = userEvent.setup();
     const hidden = false; 
-    render(<OnboardingPopup props = {hidden} />);
+    render(<OnboardingPopup hidden = {hidden} />);
     const continueButton = await screen.findByRole("button", { name: /Continue/i });
     await user.click(continueButton);
+
+    const username = await screen.findByLabelText(/Create a Username/i);
+    expect(username).toBeInTheDocument();
+    
+    // Change the username input to valid username and check that continue button is enabled
+    await user.type(username, 'validusername');
 
     const continueButton2 = await screen.findByRole("button", { name: /Continue/i });
     await user.click(continueButton2);
@@ -129,6 +163,12 @@ describe('Fifth Onboarding Page', () => {
     const continueButton = await screen.findByRole("button", { name: /Continue/i });
     await user.click(continueButton);
 
+    const username = await screen.findByLabelText(/Create a Username/i);
+    expect(username).toBeInTheDocument();
+    
+    // Change the username input to valid username and check that continue button is enabled
+    await user.type(username, 'validusername');
+
     const continueButton2 = await screen.findByRole("button", { name: /Continue/i });
     await user.click(continueButton2);
 
@@ -154,6 +194,12 @@ describe('Fifth Onboarding Page', () => {
 
     const continueButton = await screen.findByRole("button", { name: /Continue/i });
     await user.click(continueButton);
+
+    const username = await screen.findByLabelText(/Create a Username/i);
+    expect(username).toBeInTheDocument();
+    
+    // Change the username input to valid username and check that continue button is enabled
+    await user.type(username, 'validusername');
 
     const continueButton2 = await screen.findByRole("button", { name: /Continue/i });
     await user.click(continueButton2);
@@ -182,6 +228,12 @@ describe('Sixth Onboarding Page', () => {
     const continueButton = await screen.findByRole("button", { name: /Continue/i });
     await user.click(continueButton);
 
+    const username = await screen.findByLabelText(/Create a Username/i);
+    expect(username).toBeInTheDocument();
+    
+    // Change the username input to valid username and check that continue button is enabled
+    await user.type(username, 'validusername');
+
     const continueButton2 = await screen.findByRole("button", { name: /Continue/i });
     await user.click(continueButton2);
 
@@ -209,6 +261,12 @@ describe('Sixth Onboarding Page', () => {
     const continueButton = await screen.findByRole("button", { name: /Continue/i });
     await user.click(continueButton);
 
+    const username = await screen.findByLabelText(/Create a Username/i);
+    expect(username).toBeInTheDocument();
+    
+    // Change the username input to valid username and check that continue button is enabled
+    await user.type(username, 'validusername');
+
     const continueButton2 = await screen.findByRole("button", { name: /Continue/i });
     await user.click(continueButton2);
 
@@ -224,7 +282,7 @@ describe('Sixth Onboarding Page', () => {
     const letsGoButton = await screen.findByRole("button", { name: /Let's Go!/i });
     await user.click(letsGoButton);
 
-    expect(screen.queryByText(/YOU ARE ALL SET!/i)).not.toBeInTheDocument();
+    expect(screen.getByText(/YOU ARE ALL SET!/i)).not.toBeVisible();
   })
 
 });
