@@ -5,7 +5,7 @@ import "../css/Onboarding.css";
 
 function Page1({currentPage, setCurrentPage}){
     const [pageName, setPageName] = useState("Page1");
-    console.log("current page should be 1: ", currentPage !== pageName);
+    // console.log("current page should be 1: ", currentPage !== pageName);
     return(
         <div hidden = {currentPage !== pageName}>
         <div className = "onboarding-content">
@@ -25,7 +25,7 @@ function Page1({currentPage, setCurrentPage}){
 function Page2({currentPage, setCurrentPage, setUserInfo}){
     const [pageName, setPageName] = useState("Page2");
     const [firstName, setFirstName] = useState("");
-    console.log("current page should be 2: ", currentPage !== pageName);
+    // console.log("current page should be 2: ", currentPage !== pageName);
     return(
         <div className="onboarding-wrapper" hidden = {currentPage !== pageName}>
         <div className = "onboarding-content">
@@ -113,6 +113,84 @@ function Page4({currentPage, setCurrentPage, setUserInfo}){
     )
 }
 
+function AffirmationInput({index, affirmation, setAffirmations}){
+    return(
+        <div>
+            <label htmlFor={`affirmation-${index}`}><b>Positive Affirmation {index + 1}</b></label>
+            <p>(100 Characters or Less)</p>
+            <input type="text" id={`affirmation-${index}`} name={`affirmation-${index}`} 
+            placeholder={`Affirmation ${index + 1}`} 
+            maxlength = "100"
+            aria-label={`Positive Affirmation ${index + 1}`}
+            onChange={(e) => {
+                setAffirmations((prevAffirmations) => {
+                    const newAffirmations = [...prevAffirmations];
+                    newAffirmations[index] = e.target.value;
+                    return newAffirmations;
+                }
+                )}}/>
+                <br />
+                <br />
+        </div>
+    )
+}
+
+function Page5({currentPage, setCurrentPage, setUserInfo}){
+    const [pageName, setPageName] = useState("Page5");
+    const [affirmations, setAffirmations] = useState([""]);
+
+    return(
+        <div>
+            <div className="onboarding-wrapper" hidden = {currentPage !== pageName}>
+                <div className = "onboarding-content">
+                    <h1>List some Affirmations!</h1>
+                    <p>Affirmations are positive statements that you tell or write to yourself
+                        for self-motivation. Studies have found that affirmations boost well-being. 
+                    </p>
+                    <p> TRY IT OUT!!</p>
+                    <p> Note: You will be able to edit these later.</p>
+                    <div id="affirmations-container">
+                   {affirmations.map((affirmation, index) => (
+                            <AffirmationInput 
+                                index={index} 
+                                affirmation={affirmation} 
+                                setAffirmations={setAffirmations} 
+                            />
+                        ))}
+                    </div>
+                    <br />
+                        <button className="add-affirmation-btn" onClick={() => setAffirmations((prevAffirmations) => [...prevAffirmations, ""])}>Add Another</button>
+                    <br />
+                    <button className="continue-btn"
+                    onClick={() => {setUserInfo((prevUserInfo) => ({...prevUserInfo, affirmations: affirmations})); setCurrentPage("Page6")}} >Continue</button>
+                    </div>
+            </div>
+        </div>
+    )
+}
+
+function Page6({currentPage, setCurrentPage}){
+    const [pageName, setPageName] = useState("Page6");
+    return(
+        <div>
+            <div className="onboarding-wrapper" hidden = {currentPage !== pageName}>
+                <div className = "onboarding-content">
+                    <h1>😎😎😎😎😎😎😎</h1>
+                    <h1>YOU ARE ALL SET!</h1>
+                    <p>Congratulations! 
+                        Habit.lio is now personalized for your own personal habit-tracking journey. </p>
+                    <br />
+                    <p>We wish you the best of luck on your success in building and quitting 
+                        habits. We look forward to seeing the NEW YOU🔥🔥</p>
+                    <br />
+                    <br />
+                    {/* In this button, we will handle the submission of the onboarding form */}
+                    {/* <button className="continue-btn" onClick={() => setCurrentPage("Page1")} >Finish</button> */}
+                </div>
+            </div>
+        </div>
+    )
+}
 
 function OnboardingPopup(props) {
     const [userInfo, setUserInfo] = useState({
@@ -121,6 +199,7 @@ function OnboardingPopup(props) {
         username: "",
         greetUsername: false,
         habitGoal: "",
+        affirmations: []
     });
     const [showPopup, setShowPopup] = useState(false);
     const [currentPage, setCurrentPage] = useState("Page1");
@@ -174,6 +253,13 @@ function OnboardingPopup(props) {
                     < Page4 currentPage={currentPage} 
                     setCurrentPage={setCurrentPage} 
                     setUserInfo={setUserInfo} />
+
+                    < Page5 currentPage={currentPage} 
+                    setCurrentPage={setCurrentPage} 
+                    setUserInfo={setUserInfo}/>
+
+                    < Page6 currentPage={currentPage} 
+                    setCurrentPage={setCurrentPage} />
                 </div>
             </div>
         </div>

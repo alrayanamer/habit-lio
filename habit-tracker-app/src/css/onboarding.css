@@ -54,7 +54,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    height: 85%; 
+    max-height: 40em;
     overflow-y: auto;
     flex-shrink: 0; 
 }
@@ -118,3 +118,13 @@ label{
     align-items: center;
     width: 100%;
 }
+
+/* #affirmations-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    overflow-y: auto;
+    max-height: 5em;
+    width: 100%;
+} */
