@@ -263,7 +263,7 @@ function Profile({ uid, onClose }) {
         </button>
 
         {showEdit ? (
-          // ── Edit Screen ──
+          // Edit Screen
           <div className="profile-edit-screen">
             <h3>Edit Profile</h3>
 
@@ -292,6 +292,18 @@ function Profile({ uid, onClose }) {
               />
             </div>
 
+            <div className="profile-toggle-row">
+              <span>Public Profile</span>
+              <label className="profile-toggle">
+                <input
+                  type="checkbox"
+                  checked={editPublic}
+                  onChange={(e) => setEditPublic(e.target.checked)}
+                />
+                <span className="profile-toggle-slider" />
+              </label>
+            </div>
+
             <input
               className="profile-input"
               type="text"
@@ -307,18 +319,6 @@ function Profile({ uid, onClose }) {
               onChange={(e) => setEditBio(e.target.value)}
               rows={3}
             />
-
-            <div className="profile-toggle-row">
-              <span>Public Profile</span>
-              <label className="profile-toggle">
-                <input
-                  type="checkbox"
-                  checked={editPublic}
-                  onChange={(e) => setEditPublic(e.target.checked)}
-                />
-                <span className="profile-toggle-slider" />
-              </label>
-            </div>
 
             {saveError && <p className="profile-error">{saveError}</p>}
 

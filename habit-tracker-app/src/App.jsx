@@ -20,7 +20,6 @@ import { Eye, EyeOff } from "lucide-react";
 import googleIcon from "./icons/google_icon.png";
 import Menu from "./Menu";
 import HabitCreate from "./habitCreate";
-import NewHabitForm from "./habitAnalysis";
 import Habit from "./habitComponents/habit";
 import HabitDetails from "./HabitDetails";
 import FriendsPage from "./FriendsPage";
@@ -298,9 +297,6 @@ function App() {
                   {/* </ul> */}
 
                   <div style={{ padding: "20px" }}>
-                    <button onClick={() => setShowPopup(true)}>
-                      Habit Analysis
-                    </button>
                     {showPopup && (
                       <NewHabitForm
                         uid={user.uid}
