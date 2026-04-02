@@ -245,9 +245,13 @@ function App() {
                   habits={habits}
                   setShowFriendsPage={setShowFriendsPage}
                 />
-                <p hidden={showFriendsPage}>
-                  Welcome, <strong>{user.displayName}</strong>!
+                <p hidden={showFriendsPage} style={{ fontSize: "20px", color: "black" }}>
+                  Welcome, <strong>{(greetUsername && username) ? username : user?.email}</strong>!
                 </p>
+
+                <div hidden={showFriendsPage} style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                  <Affirmation affirmations={affirmations}/>
+              </div>
 
                 {showFriendsPage && (
                   <div>

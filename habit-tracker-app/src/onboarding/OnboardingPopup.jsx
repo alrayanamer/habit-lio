@@ -93,7 +93,7 @@ function Page3({currentPage, setCurrentPage, user}){
             <h1>Add a Profile Picture (Optional)</h1>
             <p>Upload a profile picture to personalize your experience.</p>
             <p>Let the world know who you are!!</p>
-            <label htmlFor="profile-picture">Upload Profile Picture</label>
+            <label htmlFor="profile-picture" className="required">Upload Profile Picture</label>
             <input type="file" id="profile-picture" 
             name="profile-picture" accept="image/*" onChange={(e) => setProfilePicture(e.target.files[0])}/>
             {profilePicture && (
