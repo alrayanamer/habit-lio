@@ -155,6 +155,7 @@ function App() {
           email: result.user.email,
           displayName: "",
           bio: "",
+          onboarded: false,
           isPublic: false,
           avatar: null,
           earnedBadges: [],
