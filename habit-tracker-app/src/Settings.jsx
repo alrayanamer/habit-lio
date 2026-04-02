@@ -212,6 +212,14 @@ function SettingsPopup({ closePopup }) {
           </div>
         ) : (
           <>
+            <button
+              className="settings-close-btn"
+              onClick={closePopup}
+              title="Close"
+            >
+              ✕
+            </button>
+
             <button onClick={handleExportHabits}>Export Habits to CSV</button>
 
             <button onClick={() => setShowPasswordScreen(true)}>
@@ -230,8 +238,6 @@ function SettingsPopup({ closePopup }) {
             <button className="delete-btn" onClick={handleDeleteAccount}>
               Delete Account
             </button>
-
-            <button onClick={closePopup}>Close</button>
           </>
         )}
       </div>

@@ -22,9 +22,9 @@ import { Eye, EyeOff } from "lucide-react";
 import googleIcon from "./icons/google_icon.png";
 import Menu from "./Menu";
 import HabitCreate from "./habitCreate";
-import NewHabitForm from "./habitAnalysis";
 import Habit from "./habitComponents/habit";
 import HabitDetails from "./HabitDetails";
+import FriendsPage from "./FriendsPage";
 import { AuthContext } from "./AuthContext";
 import Onboarding from "./onboarding/Onboarding.jsx";
 import Affirmation from "./onboarding/affirmation.jsx";
@@ -217,6 +217,7 @@ function App() {
   //  const [uid, setUid] = useState("USER_ID_FROM_FIREBASE"); // This is your existing UID
 
   const [selectedHabit, setSelectedHabit] = useState(null);
+  const [showFriendsPage, setShowFriendsPage] = useState(false);
 
   return (
     // home page after login
@@ -233,52 +234,123 @@ function App() {
                 uid={user.uid}
                 loadHabits={loadHabits}
                 onClose={() => setSelectedHabit(null)}
-              />) : (
-                <div>
-            <Menu
-              onHomeClick={handleGoHome}
-              onAddClick={() => setIsModalOpen(true)}
-              addHabit={addHabit}
-              uid={user.uid}
-              habits={habits}
-            />
-            <p style={{ fontSize: "36px", color: "black" }}>
-              Welcome, <strong>{(greetUsername && username) ? username : user?.email}</strong>!
-            </p>
-            
-            <div>
-              <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-              <Affirmation affirmations={affirmations}/>
-              </div>
-              {/* // Display habits */}
-              <h2 style={{ fontSize: "28px", color: "black" }}>Your Habits</h2>
-              {/* <ul> */}
-              {habits.map((habit) => (
-                < Habit key={habit.id} 
-                habit={habit} uid={user.uid}
-                 loadHabits={loadHabits}
-                 onEdit={() => setSelectedHabit(habit)}/>
-              ))}
-              {/* </ul> */}
+              />
+            ) : (
+              <div>
+                <Menu
+                  onHomeClick={handleGoHome}
+                  onAddClick={() => setIsModalOpen(true)}
+                  addHabit={addHabit}
+                  uid={user.uid}
+                  habits={habits}
+                  setShowFriendsPage={setShowFriendsPage}
+                />
+                <p hidden={showFriendsPage}>
+                  Welcome, <strong>{user.displayName}</strong>!
+                </p>
 
-              <div style={{ padding: "20px" }}>
-                <button onClick={() => setShowPopup(true)}>
-                  Habit Analysis
-                </button>
-                {showPopup && (
-                  <NewHabitForm
-                    uid={user.uid}
-                    onClose={() => setShowPopup(false)}
-                  />
+                {showFriendsPage && (
+                  <div>
+                    <FriendsPage />
+                  </div>
                 )}
+
+                {/* Modal for habit adding */}
+                {isModalOpen && (
+                  <div className="modal-overlay">
+                    <div className="modal-content">
+                      <h3>Add a New Habit</h3>
+
+                      <section>
+                        <h4>Quick Add:</h4>
+                        <div className="standard-habits-grid">
+                          {standardHabits.map((habit) => (
+                            <button
+                              key={habit}
+                              onClick={() => {
+                                handleAddStandardHabit(habit);
+                              }}
+                              className="standard-habit-btn"
+                            >
+                              {habit}
+                            </button>
+                          ))}
+                        </div>
+                      </section>
+
+                      <hr />
+
+                      <section>
+                        <h4>Create Custom Habit:</h4>
+                        <input
+                          type="text"
+                          value={newHabitTitle}
+                          onChange={(e) => setNewHabitTitle(e.target.value)}
+                          onKeyPress={(e) =>
+                            e.key === "Enter" && handleAddHabit()
+                          }
+                          placeholder="Enter a new habit..."
+                          disabled={loading}
+                        />
+                        <div className="modal-actions">
+                          <button onClick={handleAddHabit} disabled={loading}>
+                            {loading ? "Adding..." : "Add Habit"}
+                          </button>
+                          <button
+                            onClick={() => setIsModalOpen(false)}
+                            className="cancel-btn"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </section>
+                    </div>
+                  </div>
+                )}
+                <div hidden={showFriendsPage}>
+                  {/* // Display habits */}
+                  <h2 style={{ fontSize: "28px", color: "black" }}>
+                    Your Habits
+                  </h2>
+                  {/* <ul> */}
+                  {habits.map((habit) => (
+                    <Habit
+                      key={habit.id}
+                      habit={habit}
+                      uid={user.uid}
+                      loadHabits={loadHabits}
+                      onEdit={() => setSelectedHabit(habit)}
+                    />
+                    // <li key={habit.id}>
+                    //     <div>
+                    //         <h3>{habit.title}</h3>
+                    //         {habit.description && <p>{habit.description}</p>}
+                    //         <span>{habit.frequency}</span>
+                    //     </div>
+                    //     <button
+                    //         onClick={() => handleDeleteHabit(habit.id)}
+                    //     >
+                    //         Delete
+                    //     </button>
+                    // </li>
+                  ))}
+                  {/* </ul> */}
+
+                  <div style={{ padding: "20px" }}>
+                    {showPopup && (
+                      <NewHabitForm
+                        uid={user.uid}
+                        onClose={() => setShowPopup(false)}
+                      />
+                    )}
+                  </div>
+                  {habits.length === 0 && (
+                    <p>No habits yet. Create one to get started!</p>
+                  )}
+                </div>
+                <br />
               </div>
-              {habits.length === 0 && (
-                <p>No habits yet. Create one to get started!</p>
-              )}
-            </div>
-            <br />
-            </div>
-              )}
+            )}
           </div>
         ) : (
           // sign in/sign up
