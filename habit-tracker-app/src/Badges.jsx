@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { BADGES, checkBadges } from "./badgeDefinitions";
 import { getEarnedBadges, saveEarnedBadges } from "./firestore";
-import { X } from "lucide-react";
 import "./Badges.css";
 
 const CATEGORIES = [
@@ -67,7 +66,7 @@ function Badges({ uid, habits, onClose }) {
         onClick={(e) => e.stopPropagation()}
       >
         <button className="badges-close-btn" onClick={onClose} title="Close">
-          <X size={24} />
+          ✕
         </button>
 
         <div className="badges-header">
