@@ -17,9 +17,10 @@
   border-radius: 10px;
   width: 260px;
   text-align: center;
+  position: relative;
 }
 
-.settings-popup > button {
+.settings-popup > button:not(.settings-close-btn) {
   margin-top: 10px;
   width: 100%;
 }
@@ -61,4 +62,19 @@
   height: 24px;
   width: 24px;
   border-radius: 6px;
+}
+
+.settings-close-btn {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  color: #aaa;
+}
+
+.settings-close-btn:hover {
+  color: #555;
 }

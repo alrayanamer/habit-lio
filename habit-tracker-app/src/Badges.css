@@ -23,3 +23,18 @@
   overflow-y: auto;
   text-align: center;
 }
+
+.badges-close-btn {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  color: #aaa;
+}
+
+.badges-close-btn:hover {
+  color: #555;
+}

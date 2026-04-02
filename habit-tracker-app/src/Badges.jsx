@@ -67,7 +67,7 @@ function Badges({ uid, habits, onClose }) {
         onClick={(e) => e.stopPropagation()}
       >
         <button className="badges-close-btn" onClick={onClose} title="Close">
-          <X size={24} />
+          ✕
         </button>
 
         <div className="badges-header">
