@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import {
   GoogleAuthProvider,
   signInWithCredential,
@@ -12,6 +12,8 @@ import {
   listHabits,
   createHabit,
   deleteHabit,
+  getOnboardingStatus,
+  getUserInfo
 } from "./firestore";
 import "./App.css";
 import "./Login.css";
@@ -24,6 +26,8 @@ import Habit from "./habitComponents/habit";
 import HabitDetails from "./HabitDetails";
 import FriendsPage from "./FriendsPage";
 import { AuthContext } from "./AuthContext";
+import Onboarding from "./onboarding/Onboarding.jsx";
+import Affirmation from "./onboarding/affirmation.jsx";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -32,17 +36,36 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("");
+  const [greetUsername, setGreetUsername] = useState(false);
+  const [affirmations, setAffirmations] = useState([]);
+
   const [error, setAuthError] = useState(null);
   const [isSignUp, setIsSignUp] = useState(true);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [alreadyOnboarded, setAlreadyOnboarded] = useState(false);
 
   // Load in the habits for the user,
   // called after login and after edits/deletes to refresh the habit list
   const loadHabits = async (uid) => {
+    if (!uid) return;
     try {
       const userHabits = await listHabits(uid);
       setHabits(userHabits);
+
+      const alreadyOnboarded = await getOnboardingStatus(uid);
+      // console.log("Already onboarded: ", alreadyOnboarded);
+      setAlreadyOnboarded(alreadyOnboarded);
+
+      const getUsername =  await getUserInfo(uid, "username");
+      setUsername(getUsername);
+
+      const getGreetUsername = await getUserInfo(uid, "greetUsername");
+      setGreetUsername(getGreetUsername);
+
+      const getAffirmations = await getUserInfo(uid, "affirmations");
+      setAffirmations(getAffirmations);
     } catch (error) {
       console.error("Error loading habits:", error);
     }
@@ -54,12 +77,35 @@ function App() {
       setUser(currentUser);
       if (currentUser) {
         loadHabits(currentUser.uid);
+        // console.log("Username set: ", username);
       } else {
         setHabits([]);
       }
     });
-    return () => unsubscribe();
+
+    return () => {unsubscribe();};
   }, []);
+
+  useEffect(() => {
+  const checkOnboardingStatus = async () => {
+    // 1. Safety check: if no user is logged in yet, stop here.
+    if (!user?.uid) return;
+
+    try {
+      const status = await getOnboardingStatus(user.uid);
+      // console.log("Already onboarded: ", status);
+      setAlreadyOnboarded(status);
+    } catch (error) {
+      console.error("Error checking onboarding status:", error);
+    }
+  };
+
+  // 2. Run the function normally (not in the return/cleanup)
+  checkOnboardingStatus();
+
+  // 3. Dependency should be [user], not [alreadyOnboarded]
+  // This means "Re-check status whenever the logged-in user changes"
+}, [user]); 
 
   const handleGoogleAuth = () => {
     chrome.identity.clearAllCachedAuthTokens(() => {
@@ -109,6 +155,7 @@ function App() {
           email: result.user.email,
           displayName: "",
           bio: "",
+          onboarded: false,
           isPublic: false,
           avatar: null,
           earnedBadges: [],
@@ -135,22 +182,6 @@ function App() {
       }
     }
   };
-
-  // const handleAddHabit = async () => {
-  //     if (!newHabitTitle.trim() || !user) return;
-
-  //     setLoading(true);
-  //     try {
-  //         await createHabit(user.uid, { title: newHabitTitle });
-  //         setNewHabitTitle("");
-  //         setIsModalOpen(false);
-  //         await loadHabits(user.uid);
-  //     } catch (error) {
-  //         console.error("Error creating habit:", error);
-  //     } finally {
-  //         setLoading(false);
-  //     }
-  // };
 
   const handleAddStandardHabit = async (title) => {
     setLoading(true);
@@ -197,11 +228,13 @@ function App() {
     // home page after login
     <AuthContext.Provider value={user}>
       <div className="card">
-        {/* <h1>Habit-lio</h1> */}
         {user ? (
           <div>
-            {selectedHabit ? (
-              <HabitDetails
+            { !alreadyOnboarded &&
+              <Onboarding hidden={alreadyOnboarded} user={user} 
+              setAlreadyOnboarded={setAlreadyOnboarded} />
+           }
+            { selectedHabit ? (<HabitDetails
                 habit={selectedHabit}
                 uid={user.uid}
                 loadHabits={loadHabits}
@@ -217,9 +250,13 @@ function App() {
                   habits={habits}
                   setShowFriendsPage={setShowFriendsPage}
                 />
-                <p hidden={showFriendsPage}>
-                  Welcome, <strong>{user.displayName}</strong>!
+                <p hidden={showFriendsPage} style={{ fontSize: "20px", color: "black" }}>
+                  Welcome, <strong>{(greetUsername && username) ? username : user?.email}</strong>!
                 </p>
+
+                <div hidden={showFriendsPage} style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                  <Affirmation affirmations={affirmations}/>
+              </div>
 
                 {showFriendsPage && (
                   <div>

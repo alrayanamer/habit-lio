@@ -30,7 +30,7 @@ function NameDescription({ habit, updateHabitField }) {
               />
             </div>
           </div>
-          <label htmlFor="color-picker">Set Color: </label>
+          <label htmlFor="color-picker" style={{fontSize: "14px"}}>Set Color: </label>
           <select
             name="color-picker"
             id="color-picker"
@@ -334,7 +334,7 @@ function GoalInfo({ habit, updateGoalField, setDisabled }) {
   return (
     <div id="goal-info">
       <div id="goal-period">
-        <label>Goal Period:</label>
+        <label style={{fontSize: "16px"}}>Goal Period:</label>
         <select
           name="period"
           id="period"

@@ -14,7 +14,9 @@ import {
   limit,
 } from "firebase/firestore";
 
-import { db } from "./firebase";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+
+import { db, storage } from "./firebase";
 
 // Search for users by username
 export const searchUsers = async (searchString) => {
@@ -190,15 +192,7 @@ export const handleSaveHabit = async (user, updatedHabit) => {
         periodInMinutes: 1440, // 24 hours
       });
     }
-
-    // setHabits((prev) =>
-    //   prev.map((habit) =>
-    //     habit.id === updatedHabit.id ? updatedHabit : habit
-    //   )
-    // );
-
-    // setShowEditPopup(false);
-    // setEditingHabit(null);
+    
   } catch (error) {
     console.error("Failed to update habit:", error);
   }
@@ -406,3 +400,72 @@ export const saveEarnedBadges = async (uid, earnedIds) => {
   const userRef = doc(db, "users", uid);
   await updateDoc(userRef, { earnedBadges: earnedIds });
 };
+
+// Retrieves user onboarding status
+export const getOnboardingStatus = async (uid) => {
+  const userRef = doc(db, "users", uid);
+  const snapshot = await getDoc(userRef);
+  if (!snapshot.exists()) return false;
+  return snapshot.data().alreadyOnboarded ?? false;
+}
+
+// Saves user onboarding status to firestore
+export const saveOnboardingStatus = async (uid, status) => {
+  const userRef = doc(db, "users", uid);
+  await updateDoc(userRef, { alreadyOnboarded: status });
+}
+
+export const saveUserInfo = async (uid, userInfo) => {
+  const userRef = doc(db, "users", uid);
+  await updateDoc(userRef, { userInfo: userInfo });
+  window.location.reload();
+}
+
+export const getUserInfo = async (uid, specificItem) => {
+  const userRef = doc(db, "users", uid);
+  const snapshot = await getDoc(userRef);
+  
+  if (!snapshot.exists()) return null;
+  
+  const userInfo = snapshot.data().userInfo;
+
+  // Check if the specific key exists in the userInfo object
+  if (specificItem in userInfo) {
+    return userInfo[specificItem];
+  }
+
+  // Fallback if the key doesn't exist
+  return userInfo; 
+};
+
+export const checkUsernameExists = async (username) => {
+  const usersRef = collection(db, "users");
+  const q = query(usersRef);
+  const snapshot = await getDocs(q);
+  const allUsernames = snapshot.docs.map(doc => doc.data().userInfo?.username).filter(Boolean);
+  return allUsernames.includes(username) ? true : false;
+}
+
+export const saveProfilePicture = async (uid, file) => {
+  try {
+    // 1. Create the reference
+    const storageRef = ref(storage, `profile_pictures/${uid}`);
+
+    // 2. Upload the file
+    await uploadBytes(storageRef, file);
+
+    // 3. Get the actual HTTPS URL that a browser can display
+    const downloadURL = await getDownloadURL(storageRef);
+
+    // 4. Update the user document in Firestore with the real URL
+    const userRef = doc(db, "users", uid);
+    await updateDoc(userRef, { 
+      profilePictureUrl: downloadURL 
+    });
+
+    return downloadURL;
+  } catch (error) {
+    console.error("Error uploading profile picture:", error);
+    throw error;
+  }
+}
