@@ -10,7 +10,7 @@ function Menu({ onHomeClick, addHabit, setShowFriendsPage }) {
     <>
       <div id="menu">
         {" "}
-        <button id="home-btn" title="Home" onClick={onHomeClick}>
+        <button id="home-btn" title="Home" onClick={() => {onHomeClick; setShowFriendsPage(false);}}>
           {" "}
           <House color="black" />{" "}
         </button>{" "}

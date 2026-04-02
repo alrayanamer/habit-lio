@@ -1,8 +1,10 @@
 import { useState } from "react";
-import { UserRoundPlus, Search, UserRoundCheck, UserRoundX } from "lucide-react";
+import { UserRoundPlus, Search, UserRoundCheck, UserRoundX, MessageCircle} from "lucide-react";
 import './index.css';
 import './FriendsPage.css';
 
+
+// -- Using fake information for now -----------------------------
 const friends = [
   { uid: 1, name: "Alex Rivera",  username: "alexrivera"  },
   { uid: 2, name: "Jordan Kim",   username: "jordankim"   },
@@ -37,14 +39,16 @@ const ALL_USERS = [
   { uid: 15, name: "Mei Tanaka",   username: "meitanaka"   },
 ];
 
-
+// -----------------------------------------------------------------
 
 const FriendCard = ({ friend, onClick }) => (
     <button className="friend-card" onClick={() => onClick(friend)}>
-        {/* <ProfilePicture /> */}
-        <div>
-        <div className="friend-card-name">{friend.name}</div>
-        <div className="friend-card-username">@{friend.username}</div>
+        <div style={{ display: "flex", flexDirection: "row", gap: "10px", justifyContent: "left", alignItems: "center"}}>
+            <div id="friend-picture"></div>
+            <div>
+                {/* <div className="friend-card-name">{friend.name}</div> */}
+                <div className="friend-card-username">@{friend.username}</div>
+            </div>
         </div>
     </button>
 );
@@ -59,7 +63,7 @@ const FriendsList = ({ onFriendClick, onRequestsClick, requestCount }) => {
 
   const searchResults = hasInput
     ? ALL_USERS.filter(u =>
-        u.name.toLowerCase().includes(search.toLowerCase()) ||
+        // u.name.toLowerCase().includes(search.toLowerCase()) ||
         u.username.toLowerCase().includes(search.toLowerCase())
       )
     : [];
@@ -97,7 +101,8 @@ const FriendsList = ({ onFriendClick, onRequestsClick, requestCount }) => {
                 >
 
                   <div className="search-dropdown-info">
-                    <div className="search-dropdown-name">{user.name}</div>
+                    {/* <div className="search-dropdown-name">{user.name}</div> */}
+                    <div className="search-dropdown-picture"></div>
                     <div className="search-dropdown-username">@{user.username}</div>
                   </div>
                 </button>
@@ -121,9 +126,9 @@ const FriendsList = ({ onFriendClick, onRequestsClick, requestCount }) => {
 
 // -- FriendRequestsModal -------------------------------------------------------------
 
-const FriendRequestsModal = ({ requests, onClose, onFriendClick, onAccept, onDecline }) => (
-    <div id="modal-overlay">
-        <div id="requests-modal">
+const FriendRequestsModal = ({ requests, onClose, onUserClick, onAccept, onDecline }) => (
+    <div id="requests-modal-overlay" onClick={onClose}>
+        <div id="requests-modal" onClick={(e) => e.stopPropagation()}>
             <div id="requests-modal-header">
                 <span id="requests-modal-title">Friend Requests</span>
                 <button id="requests-modal-close" onClick={onClose}>x</button>
@@ -134,10 +139,10 @@ const FriendRequestsModal = ({ requests, onClose, onFriendClick, onAccept, onDec
                     <button 
                         key={req.uid}
                         className="request-card"
-                        onClick={() => onFriendClick(req)}
+                        onClick={() => onUserClick(req)}
                     >
-                        <div id="request-card-top">
-                            <div id="request-card-name">{req.name}</div>
+                        <div id="request-card-wrapper">
+                            <div id="request-card-picture"></div>
                             <div id="request-card-username">@{req.username}</div>
                         </div>
 
@@ -155,6 +160,7 @@ const FriendRequestsModal = ({ requests, onClose, onFriendClick, onAccept, onDec
                                 <UserRoundX /> 
                             </button>
                         </div>
+                        
                     </button>
                 ))}
             </div>
@@ -162,28 +168,100 @@ const FriendRequestsModal = ({ requests, onClose, onFriendClick, onAccept, onDec
     </div>
 );
 
+// -- UserProfileModal ------------------------------------------------------------------------
+
+const UserProfileModal = ({ user, isFriend, hasRequest, sendRequest, onClose, onAccept, onDecline, onRemoveFriend }) => (
+    <div id="profile-modal-overlay" onClick={onClose}>
+        <div id="profile-modal" onClick={e => e.stopPropagation()}>
+    
+            <button id="profile-modal-close" onClick={onClose}>✕</button>
+        
+            <div id="profile-modal-picture">
+                
+            </div>
+        
+            {/* <div id="profile-modal-name">{user.name}</div> */}
+            <div id="profile-modal-username">@{user.username}</div>
+        
+            <div id="profile-modal-actions">
+                {isFriend ? ( // Clicking on a friended user
+                    <div style={{display: "flex", gap: "10px", flexDirection: "row"}}>
+                        <button className="profile-btn profile-btn-remove" onClick={() => { onRemoveFriend(user.uid); }}>
+                            <UserRoundX /> Remove Friend
+                        </button>
+
+                        <button className="profile-btn profile-btn-message">
+                            <MessageCircle />Message
+                        </button>
+                    </div>
+                ) : hasRequest ? ( // Clicking on a user that sent a friend request to you
+                    <div style={{display: "flex", flexDirection: "row", gap: "10px"}}>
+                        <button className="profile-btn profile-btn-add" onClick={() => { onAccept(user.uid); }}>
+                            <UserRoundPlus /> Accept Request
+                        </button>
+
+                        <button 
+                            className="profile-btn profile-btn-remove" 
+                            onClick={() => { onDecline(user.uid); }}
+                        >
+                            <UserRoundX /> Decline Request
+                        </button>
+                    </div>
+                ) : ( // Clicking on a user that is not your friend or has not sent a friend request
+                    <div>
+                        <button className="profile-btn profile-btn-add" onClick={() => { sendRequest(user.uid); }}><UserRoundPlus />Add Friend</button>
+                    </div>
+                )}
+            </div>
+
+            {/* Add habit analytics here */}
+    
+        </div>
+    </div>
+);
+
 function FriendsPage() {
-    const [selectedFriend, setSelectedFriend] = useState(null);
+    const [selectedUser, setSelectedUser] = useState(null);
     const [showRequests, setShowRequests] = useState(false);
     const [requests, setRequests] = useState(INITIAL_REQUESTS);
+    const [friendList, setFriendsList] = useState(friends);
     
-    const handleAccept  = id => setRequests(r => r.filter(req => req.id !== id));
-    const handleDecline = id => setRequests(r => r.filter(req => req.id !== id));
+    // Needs set up with firestore
+    //const handleAccept  = id => setRequests(r => r.filter(req => req.id !== id));
+    //const handleDecline = id => setRequests(r => r.filter(req => req.id !== id));
+
+    const isFriend = (uid) => friendList.some(f => f.uid === uid);
+    const hasRequest = (uid) => requests.some(r => r.uid === uid);
 
     return (
         <div style={{ minWidth: "75vh" }}>
         <FriendsList
-           // onFriendClick={setSelectedFriend}
+            onFriendClick={setSelectedUser}
             onRequestsClick={() => setShowRequests(true)}
             requestCount={INITIAL_REQUESTS.length}
         />
+
+        {selectedUser && (
+            <UserProfileModal
+                user={selectedUser}
+                isFriend={isFriend(selectedUser.uid)}
+                hasRequest={hasRequest(selectedUser.uid)}
+                onClose={() => setSelectedUser(null)}
+                //sendRequest={handleSendRequest}
+                //onAdd={handleAddFriend}
+                //onDecline={handleDeclineFriend}
+                //onRemove={handleRemoveFriend}
+            />
+        )}
+
 
         {showRequests && (
             <FriendRequestsModal
                 requests={requests}
                 onClose={() => setShowRequests(false)}
-                onAccept={handleAccept}
-                onDecline={handleDecline}
+                onUserClick={setSelectedUser}
+                //onAccept={handleAccept}
+                //onDecline={handleDecline}
             />
         )}
         </div>

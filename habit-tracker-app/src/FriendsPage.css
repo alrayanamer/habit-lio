@@ -1,3 +1,12 @@
+/* Friends List CSS */
+
+#friend-picture {
+    background-color: #767676;
+    width: 50px;
+    height: 50px;
+
+    border-radius: 50%;
+}
 
 #friends-page {
     display: flex;
@@ -103,7 +112,20 @@
 }
 
 .search-dropdown-info {
+    display: flex;
     flex: 1;
+    gap: 10px;
+    flex-direction: row;
+    justify-content: left;
+    align-items: center;
+}
+
+.search-dropdown-picture {
+    background-color: #767676;
+    width: 30px;
+    height: 30px;
+
+    border-radius: 50%;
 }
 
 .search-dropdown-name {
@@ -113,8 +135,8 @@
 }
  
 .search-dropdown-username {
-    font-size: 11px;
-    color: #888;
+    font-size: 15px;
+    color: #1a1a1a;
 }
  
 #search-dropdown-empty {
@@ -132,7 +154,7 @@
 }
 
 /* Friend Request Modal CSS */
-#modal-overlay {
+#requests-modal-overlay {
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0.4);
@@ -141,14 +163,14 @@
     align-items: flex-start;
     justify-content: center;
     padding-top: 60px;
-    z-index: 999;
+    z-index: 20;
 }
 
 #requests-modal {
     background: #f0f0f0;
     border-radius: 20px;
     padding: 20px;
-    width: 90%;
+    width: 50%;
     max-height: 75%;
     overflow-y: auto;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
@@ -202,6 +224,20 @@
     margin-bottom: 4px;
 }
 
+#request-card-wrapper {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    align-items: center;
+}
+
+#request-card-picture {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #767676;
+}
+
 #request-card-name {
     font-weight: 600;
     font-size: 11px;
@@ -209,14 +245,15 @@
 }
 
 #request-card-username {
-    font-size: 10px;
-    color: #888;
+    font-size: 18px;
+    color: #1a1a1a;
 }
 
 #request-card-actions {
     display: flex;
     gap: 14px;
     justify-content: flex-end;
+
 }
 
 #request-card-accept {
@@ -246,3 +283,116 @@
 #request-card-decline:hover {
     background-color: #999;
 }
+
+
+/* User Profile Modal CSS */
+
+#profile-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 60px;
+    z-index: 30;
+}
+
+#profile-modal {
+    background: #fff;
+    border-radius: 20px;
+    padding: 32px 24px 24px;
+    width: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.2);
+}
+ 
+#profile-modal-close {
+    position: absolute;
+    top: 12px;
+    right: 14px;
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    color: #aaa;
+}
+ 
+#profile-modal-close:hover {
+    color: #555;
+}
+ 
+#profile-modal-picture {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: #969696;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 4px;
+}
+ 
+#profile-modal-name {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1a1a1a;
+}
+ 
+#profile-modal-username {
+    font-size: 18px;
+    color: #1a1a1a;
+    margin-bottom: 8px;
+}
+ 
+#profile-modal-actions {
+    margin-top: 8px;
+}
+ 
+.profile-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 20px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: opacity 0.15s;
+    justify-content: center;
+
+    width: 180px;
+}
+ 
+.profile-btn:hover {
+    opacity: 0.8;
+}
+ 
+.profile-btn-add {
+    background: #3478f6;
+    color: #fff;
+}
+ 
+.profile-btn-remove {
+    background: rgba(231, 76, 60, 0.12);
+    color: #e74c3c;
+    border: 1px solid rgba(231, 76, 60, 0.3);
+}
+
+.profile-btn-message {
+    background: #fff;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+    border: 1px solid #767676;
+}
+ 
