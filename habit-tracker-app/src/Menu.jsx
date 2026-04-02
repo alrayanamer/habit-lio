@@ -2,12 +2,12 @@ import { House, Users, Settings, Mail, Medal } from "lucide-react";
 import "./App.css";
 import HabitCreate from "./habitCreate";
 import { useState } from "react";
-import SettingsPopup from "./settingsMenuPopup";
+import SettingsPopup from "./Settings.jsx";
 import Badges from "./Badges.jsx";
 
 function Menu({ onHomeClick, addHabit, uid, habits }) {
   const [showSettings, setShowSettings] = useState(false);
-  const [showBadges, setShowBadges]     = useState(false);
+  const [showBadges, setShowBadges] = useState(false);
   return (
     <>
       <div id="menu">
@@ -17,32 +17,27 @@ function Menu({ onHomeClick, addHabit, uid, habits }) {
           <House color="black" />{" "}
         </button>{" "}
         <span className="divider"></span>{" "}
-
-
         <button
-            id="badges-btn"
-            title="Badges"
-            onClick={() => setShowBadges(true)}>
+          id="badges-btn"
+          title="Badges"
+          onClick={() => setShowBadges(true)}
+        >
           <Medal color="black" />
         </button>
         <span className="divider" />
-
-
         <button id="users-btn" title="Friends">
           {" "}
           <Users color="black" />{" "}
         </button>{" "}
         <span className="divider"></span>
-
-
-        <HabitCreate addHabit={addHabit} /> <span className="divider"></span>{" "}
+        <HabitCreate
+          addHabit={addHabit}
+        /> <span className="divider"></span>{" "}
         <button id="mail-btn" title="Messages">
           {" "}
           <Mail color="black" />{" "}
         </button>{" "}
         <span className="divider"></span>{" "}
-
-
         <button
           id="more-btn"
           title="Settings"
@@ -58,13 +53,12 @@ function Menu({ onHomeClick, addHabit, uid, habits }) {
       )}
 
       {showBadges && (
-          <Badges
-              uid={uid}
-              habits={habits}
-              onClose={() => setShowBadges(false)}
-          />
+        <Badges
+          uid={uid}
+          habits={habits}
+          onClose={() => setShowBadges(false)}
+        />
       )}
-
     </>
   );
 }
