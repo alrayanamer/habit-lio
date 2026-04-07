@@ -15,6 +15,10 @@ import {
   getOnboardingStatus,
   getUserInfo
 } from "./firestore";
+
+// import{
+//   loadAffirmations
+// } from "./second-firestore";
 import "./App.css";
 import "./Login.css";
 // import icons from Lucide React
@@ -66,6 +70,8 @@ function App() {
 
       const getAffirmations = await getUserInfo(uid, "affirmations");
       setAffirmations(getAffirmations);
+      console.log("Affirmations: ", getAffirmations);
+
     } catch (error) {
       console.error("Error loading habits:", error);
     }
