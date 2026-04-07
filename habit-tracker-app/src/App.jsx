@@ -29,9 +29,11 @@ import HabitCreate from "./habitCreate";
 import Habit from "./habitComponents/habit";
 import HabitDetails from "./HabitDetails";
 import FriendsPage from "./FriendsPage";
+import Messages from "./Messages";
 import { AuthContext } from "./AuthContext";
 import Onboarding from "./onboarding/Onboarding.jsx";
 import Affirmation from "./onboarding/affirmation.jsx";
+import Messages from "./Messages.jsx";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -232,6 +234,7 @@ function App() {
 
   const [selectedHabit, setSelectedHabit] = useState(null);
   const [showFriendsPage, setShowFriendsPage] = useState(false);
+  const [showMessagesPage, setShowMessagesPage] = useState(false);
 
   return (
     // home page after login
@@ -246,7 +249,7 @@ function App() {
           </div>
         ) : (
           <div>
-            { !alreadyOnboarded &&
+             { !alreadyOnboarded &&
               <Onboarding hidden={alreadyOnboarded} user={user} 
               setAlreadyOnboarded={setAlreadyOnboarded} />
            }
@@ -265,18 +268,31 @@ function App() {
                   uid={user.uid}
                   habits={habits}
                   setShowFriendsPage={setShowFriendsPage}
+                  setShowMessagesPage={setShowMessagesPage}
                 />
-                <p hidden={showFriendsPage} style={{ fontSize: "20px", color: "black" }}>
+                <p hidden={showFriendsPage || showMessagesPage} style={{ fontSize: "20px", color: "black" }}>
                   Welcome, <strong>{(greetUsername && username) ? username : user?.email}</strong>!
                 </p>
 
-                <div hidden={showFriendsPage} style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-                  <Affirmation user={user} affirmations={affirmations}/>
-              </div>
+                <div 
+                  style={{ 
+                    display: showFriendsPage || showMessagesPage ? "none" : "flex",
+                    justifyContent: "center", 
+                    alignItems: "center",
+                  }}
+                >
+                  <Affirmation affirmations={affirmations} />
+                </div>
 
                 {showFriendsPage && (
                   <div>
                     <FriendsPage />
+                  </div>
+                )}
+
+                {showMessagesPage && (
+                  <div>
+                    <Messages />
                   </div>
                 )}
 
@@ -332,7 +348,7 @@ function App() {
                     </div>
                   </div>
                 )}
-                <div hidden={showFriendsPage}>
+                <div hidden={showFriendsPage || showMessagesPage}>
                   {/* // Display habits */}
                   <h2 style={{ fontSize: "28px", color: "black" }}>
                     Your Habits
