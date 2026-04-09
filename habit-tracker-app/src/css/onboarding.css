@@ -153,9 +153,49 @@ label {
     align-items: center;
     justify-content: space-between;
     /* border: 5px solid red; */
-    width: 70%;
+    width: 50%;
 }
 
+#generate-affirmation-btn-onboarding{
+        background-color: #969696;
+    border: none;
+
+    &:hover {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        outline: none;
+    }
+
+    &:focus {
+        outline: none;
+    }
+
+    &:disabled {
+        background-color: #D9D9D9;
+        cursor: not-allowed;
+    }
+}
+
+
+.affirmation-input-container-onboarding{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    /* border: 5px solid black; */
+    width: 100%;
+}
+.affirmation-input-inner-onboarding{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    /* border: 5px solid red; */
+    width: 85%;
+}
+
+#affirmations-container {
+    width: 100%;
+}
 
 /* #affirmations-container{
     display: flex;

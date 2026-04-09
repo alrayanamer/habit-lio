@@ -10,13 +10,25 @@ import { generateAffirmations } from "../gemini";
 function AffirmationInput({index, affirmation, setAffirmations}){
 
     const [disabled, setDisabled] = useState(false);
+    const [affirmationText, setAffirmationText] = useState(affirmation);
 
     const generateAffirmation = async () => {
         setDisabled(true);
         const response = await generateAffirmations();
         console.log("Generated Affirmation: ", response);
+        setAffirmationText(response);
+        // Update the parent component's affirmations state with the new affirmation
+        setAffirmations((prevAffirmations) => {
+            const newAffirmations = [...prevAffirmations];
+            newAffirmations[index] = response;
+            return newAffirmations;
+        });
         setDisabled(false);
     }
+
+    useEffect(() => {
+        setAffirmationText(affirmation);
+    }, [affirmation]);
 
     return(
         <div>
@@ -28,8 +40,9 @@ function AffirmationInput({index, affirmation, setAffirmations}){
                     placeholder={`Affirmation ${index + 1}`} 
                     maxlength = "100"
                     aria-label={`Positive Affirmation ${index + 1}`}
-                    value={affirmation}
+                    value={affirmationText}
                     onChange={(e) => {
+                        setAffirmationText(e.target.value);
                         setAffirmations((prevAffirmations) => {
                             const newAffirmations = [...prevAffirmations];
                             newAffirmations[index] = e.target.value;

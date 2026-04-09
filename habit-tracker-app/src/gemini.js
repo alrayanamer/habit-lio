@@ -18,9 +18,10 @@ async function generateAffirmations() {
         + defaultAffirmations.join(" ")
         });
         console.log(response.text);
+        return response.text;
     } catch (error) {
         console.error("Error generating affirmation: ", error);
-        return "I am capable of achieving my goals.";
+        return defaultAffirmations[Math.floor(Math.random() * defaultAffirmations.length)];
     }
 }
 // // main();
