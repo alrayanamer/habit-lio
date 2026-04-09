@@ -5,6 +5,8 @@ import "../css/Onboarding.css";
 
 import { saveOnboardingStatus, saveUserInfo, 
     checkUsernameExists, saveProfilePicture} from "../firestore.js";
+import { generateAffirmations } from "../gemini";
+import {Lightbulb} from "lucide-react";
 
 function Page1({currentPage, setCurrentPage}){
     const [pageName, setPageName] = useState("Page1");
@@ -90,7 +92,7 @@ function Page3({currentPage, setCurrentPage, user}){
     return(
         <div className="onboarding-wrapper" hidden = {currentPage !== pageName}>
         <div className = "onboarding-content">
-            <h1>Add a Profile Picture (Optional)</h1>
+            <h1>Add a Profile Picture</h1>
             <p>Upload a profile picture to personalize your experience.</p>
             <p>Let the world know who you are!!</p>
             <label htmlFor="profile-picture" className="required">Upload Profile Picture</label>
@@ -99,7 +101,7 @@ function Page3({currentPage, setCurrentPage, user}){
             {profilePicture && (
                 <div>
                     <p>Selected Profile Picture:</p>
-                    <img src={URL.createObjectURL(profilePicture)} alt="Profile" />
+                    <img width="50%" height="50%" src={URL.createObjectURL(profilePicture)} alt="Profile" />
                 </div>
             )}
             <br />
@@ -145,21 +147,55 @@ function Page4({currentPage, setCurrentPage, setUserInfo}){
 }
 
 function AffirmationInput({index, affirmation, setAffirmations}){
+
+    const [disabled, setDisabled] = useState(false);
+    const [affirmationText, setAffirmationText] = useState(affirmation);
+
+    const generateAffirmation = async () => {
+        setDisabled(true);
+        const response = await generateAffirmations();
+        // console.log("Generated Affirmation: ", response);
+        setAffirmationText(response);
+        // Update the parent component's affirmations state with the new affirmation
+        setAffirmations((prevAffirmations) => {
+            const newAffirmations = [...prevAffirmations];
+            newAffirmations[index] = response;
+            return newAffirmations;
+        });
+        setDisabled(false);
+    }
+
+    useEffect(() => {
+        setAffirmationText(affirmation);
+    }, [affirmation]);
+
     return(
         <div>
             <label htmlFor={`affirmation-${index}`}><b>Positive Affirmation {index + 1}</b></label>
             <p>(100 Characters or Less)</p>
-            <input type="text" id={`affirmation-${index}`} name={`affirmation-${index}`} 
-            placeholder={`Affirmation ${index + 1}`} 
-            maxlength = "100"
-            aria-label={`Positive Affirmation ${index + 1}`}
-            onChange={(e) => {
-                setAffirmations((prevAffirmations) => {
-                    const newAffirmations = [...prevAffirmations];
-                    newAffirmations[index] = e.target.value;
-                    return newAffirmations;
-                }
-                )}}/>
+            <div className="affirmation-input-container-onboarding">
+                <div className="affirmation-input-inner-onboarding">
+                    <input type="text" id={`affirmation-${index}`} name={`affirmation-${index}`} 
+                    placeholder={`Affirmation ${index + 1}`} 
+                    maxlength = "100"
+                    aria-label={`Positive Affirmation ${index + 1}`}
+                    value={affirmationText}
+                    onChange={(e) => {
+                        setAffirmationText(e.target.value);
+                        setAffirmations((prevAffirmations) => {
+                            const newAffirmations = [...prevAffirmations];
+                            newAffirmations[index] = e.target.value;
+                            return newAffirmations;
+                        }
+                        )}}/>
+                        <button id="generate-affirmation-btn-onboarding" title="Generate Affirmation" 
+                        disabled={disabled}
+                        onClick={() => {
+                            // Logic for generating affirmation
+                            generateAffirmation();
+                        }}><Lightbulb /></button>
+                </div>
+            </div>
                 <br />
                 <br />
         </div>
