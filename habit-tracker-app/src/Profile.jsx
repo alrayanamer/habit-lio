@@ -82,12 +82,13 @@ function Profile({ uid, onClose }) {
       const userDoc = await getDoc(doc(db, "users", uid));
       if (userDoc.exists()) {
         const data = userDoc.data();
-        setDisplayName(data.displayName || "");
+        const name = data.userInfo?.username || "";
+        setDisplayName(name);
         setBio(data.bio || "");
         setIsPublic(data.isPublic || false);
         setEarnedCount((data.earnedBadges || []).length);
-        if (data.avatar) {
-          setAvatar(data.avatar);
+        if (data.profilePictureUrl) {
+          setAvatar(data.profilePictureUrl);
         } else if (user?.photoURL) {
           setAvatar(user.photoURL);
         }
@@ -239,12 +240,12 @@ function Profile({ uid, onClose }) {
     setSaveError("");
     try {
       const updates = {
-        displayName: editName,
         bio: editBio,
         isPublic: editPublic,
+        "userInfo.username": editName,
       };
-      if (editAvatar?.startsWith("data:")) {
-        updates.avatar = editAvatar;
+      if (editAvatar) {
+        updates["profilePictureUrl"] = editAvatar;
       }
       await updateDoc(doc(db, "users", uid), updates);
       await updateProfile(user, { displayName: editName });
@@ -285,9 +286,7 @@ function Profile({ uid, onClose }) {
               ) : (
                 <div className="profile-avatar-placeholder large">?</div>
               )}
-              <span className="profile-avatar-hint">
-                Click to change photo (max 150KB)
-              </span>
+              <span className="profile-avatar-hint">Click to change photo</span>
               <input
                 ref={fileInputRef}
                 type="file"
