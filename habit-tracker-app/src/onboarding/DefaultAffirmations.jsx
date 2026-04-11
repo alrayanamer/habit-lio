@@ -1,19 +1,74 @@
 import { useState, useEffect } from "react";
+import "../css/default-affirmations.css";
+import { Plus } from "lucide-react";
 
 // This will contain the default affirmations that the user can choose to add to 
 // their list of affirmations.
-function AffirmationSelector({affirmations, setAffirmations}){
-    const defaultAffirmations = [
+// function AffirmationSelector({affirmations, setAffirmations}){
+//     const defaultAffirmations = [
+//         "I am capable of achieving my goals.",
+//         "I am worthy of success and happiness.",
+//         "I am in control of my habits and choices.",
+//         "I am making progress every day.",
+//         "I am resilient and can overcome challenges."
+//     ];
+// }
+
+
+function DefaultAffirmations({hidden,setAffirmations, 
+    setShowSelector, setAffirmationFromSelector}){
+    const[hidePopup, setHidePopup] = useState(hidden);
+        const defaultAffirmations = [
         "I am capable of achieving my goals.",
         "I am worthy of success and happiness.",
         "I am in control of my habits and choices.",
         "I am making progress every day.",
-        "I am resilient and can overcome challenges."
+        "I am resilient and can overcome challenges.",
+        "I am committed to my personal growth and development.",
+        "I am surrounded by supportive and positive people.",
+        "I am grateful for the opportunities to improve myself.",
+        "I am confident in my ability to create positive change in my life."
     ];
-}
 
+    useEffect(() => {
+        setHidePopup(hidden);
+        console.log("Hidden state in DefaultAffirmations:", hidePopup);
+    }, [hidden]);
 
-function DefaultAffirmations({setAffirmations}){
+    return(
+        <div>
+            <div id="default-affirmation-container" 
+            hidden={hidePopup}>
+                <div id="default-affirmation-popup">
+                    <h2>Default Affirmations</h2>
+                    <p>Choose from these default affirmations to add to your list:</p>
+                    <div id="default-affirmation-list-container">
+                        <div id="default-affirmation-list">
+                            {defaultAffirmations.map((affirmation, index) => (
+                                <div className="default-affirmation-item" key={index}>
+                                    <div className="default-affirmation-text">
+                                        {affirmation}
+                                    </div>
+                                    
+                                    <div>
+                                        <button className="default-affirmation-btn" onClick={() => {
+                                            // setAffirmations((prevAffirmations) => [...prevAffirmations, affirmation]);
+                                            setShowSelector(false);
+                                            setAffirmationFromSelector(affirmation);
+                                        }}>
+                                            <Plus size={16} />
+                                        </button>
+                                    </div>
+                                    
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    )
 
 }
 
