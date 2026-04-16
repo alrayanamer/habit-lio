@@ -416,7 +416,6 @@ const UserProfileModal = ({
           ✕
         </button>
 
-        {/* Header matches Profile layout */}
         <div className="profile-header">
           {user.profilePictureUrl ? (
             <img src={user.profilePictureUrl} className="profile-avatar" />
@@ -635,7 +634,7 @@ function FriendsPage() {
           friendCount: friendSnapshot.data().count,
         });
 
-        // Always fetch habits for streak/count; only use full data for charts if friend
+        // Always fetch habits for streak/count. Only use full data for charts if friended
         const habitsSnap = await getDocs(
           query(collection(db, "users", uid, "habits")),
         );
@@ -648,7 +647,7 @@ function FriendsPage() {
           totalHabits: habits.length,
         }));
 
-        // Only store full habits data if they're a friend (for charts)
+        // Only store full habits data if they're a friend for charts
         const isCurrentlyFriend = friendList.some((f) => f.uid === uid);
         if (isCurrentlyFriend) {
           setSelectedUserHabits(habits);
