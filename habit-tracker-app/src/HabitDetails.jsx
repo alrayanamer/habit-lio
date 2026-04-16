@@ -155,7 +155,7 @@ function CheckBoxDay({ name, setDaysSelected, daysSelected, updateGoalField }) {
     };
 
     return (
-        <div style={{ fontSize: "14px" }}>
+        <div className="select-day">
             <input 
                 type="checkbox"
                 id={name}
@@ -164,7 +164,7 @@ function CheckBoxDay({ name, setDaysSelected, daysSelected, updateGoalField }) {
                 // FIXED: Wrapped in an arrow function so it only runs on click
                 onChange={() => handleToggle()} 
             />
-            <label htmlFor={name}>{name}</label>
+            <label htmlFor={name} style={{ fontSize: "20px" }}>{name}</label>
         </div>
     );
 }
@@ -189,7 +189,7 @@ function SelectTaskDays(props) {
             {props.mode === "specific_month_days" && (
                 <div id="task-days-select">
                     <p className="days-error" 
-                    style={{color: "red", fontSize: "14px"}} hidden={!isError2}>
+                    style={{color: "red", fontSize: "14px" }} hidden={!isError2}>
                         Error: Please select at least one day.
                     </p>
                     <CalendarEdit daysInMonthSelected={props.daysInMonthSelected} 
@@ -198,13 +198,14 @@ function SelectTaskDays(props) {
                 </div>
             )}
             {props.mode === "specific_days" && (
-                <div>
+                <div style={{ marginBottom: "15px" }}>
                     <p className="days-error" 
                     style={{color: "red", fontSize: "14px"}} hidden={!isError}>
                         Error: Please select at least one day.
                     </p>
                     <label htmlFor='specific-days' style={{fontSize: "16px"}}>
                         Choose Day(s) to accomplish the habit: </label>
+
                     <CheckBoxDay name="Monday" 
                     setDaysSelected={props.setDaysSelected} 
                     daysSelected={props.daysSelected} updateGoalField={props.updateGoalField}/>
@@ -229,13 +230,14 @@ function SelectTaskDays(props) {
                 </div>
             )}
             {props.mode === "number_days" && (
-                <div>
+                <div style={{ marginBottom: "15px" }}>
                     <label htmlFor='number-days' style={{fontSize: "16px"}}>
                         Enter the number of days per week you want to accomplish this habit:
                     </label>
                     <input type="number" id="number-days" 
                     min="1" max="7" 
                     value={props.numOfDays}
+                    
                     onChange={(e) => {
                         props.setNumOfDays(parseInt(e.target.value) || 1)
                         props.updateGoalField("numOfDays", parseInt(e.target.value) || 1);
@@ -243,7 +245,7 @@ function SelectTaskDays(props) {
                 </div>
             )}
             {props.mode === "specific_month_number" && (
-                <div>
+                <div style={{ marginBottom: "15px" }}>
                     <label htmlFor='number-month-days' style={{fontSize: "16px"}}>
                         Enter the number of days per month you want to accomplish this habit:
                     </label>
