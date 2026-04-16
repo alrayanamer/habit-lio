@@ -21,7 +21,7 @@ function NameDescription({ habit, updateHabitField }) {
     return (
         <div id="habit-desc">
             <div id="habit-header">
-                <div id="emoji-color-container">
+                <div id="color-emoji-picker">
                     <div 
                         className="habit-circle"
                         style={{ backgroundColor: habit.color ?? "#b9b7b7" }}
@@ -35,7 +35,6 @@ function NameDescription({ habit, updateHabitField }) {
                         </div>
                     </div>
                     <div id="color-picker-wrapper">
-                        <label htmlFor="color-picker">Set Color: </label>
                         <select name="color-picker" id="color-picker"
                         value={habit.color ?? "#b9b7b7"} 
                         onChange={(e) => updateHabitField("color", e.target.value)}>
@@ -282,7 +281,7 @@ function GoalInfo({ habit, updateGoalField, setDisabled }) {
     return (
         <div id="goal-info">
             <div id="goal-period">
-                <label>Goal Period:</label>
+                <label style={{fontSize: "16px"}}>Goal Period:</label>
                 <select
                     name="period"
                     id="period"

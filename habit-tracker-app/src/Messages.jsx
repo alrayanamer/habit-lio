@@ -65,11 +65,19 @@ const conversations = [
 
 const Avatar = ({ user }) => (
     <div className="avatar-wrapper">
-        <div
-            className="avatar"
-            style={{width: "35px", height: "35px", borderRadius: "50%", background: user.color}}
-        >
-        </div>
+        {user.profilePictureUrl ? (
+            <img
+                className="avatar"
+                src={user.profilePictureUrl}
+                alt={user.username}
+                style={{ width: "35px", height: "35px", borderRadius: "50%", objectFit: "cover" }}
+            />
+        ) : (
+            <div
+                className="avatar"
+                style={{ width: "35px", height: "35px", borderRadius: "50%", background: user.color || "#ccc" }}
+            />
+        )}
         { user.active && <div className="avatar-online-dot" /> }
     </div>
 );

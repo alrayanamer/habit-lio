@@ -156,7 +156,10 @@
 
 /* ── Chat Header ── */
 #chat-area {
-    grid-area: chat-header;
+    grid-area: chat-header / chat-header / input-bar / input-bar;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 #chat-header {
     display: flex;
@@ -237,6 +240,7 @@
 #messages-area {
     grid-area: messages-area;
     overflow-y: auto;
+    flex: 1;
     padding: 20px 20px 12px;
     display: flex;
     flex-direction: column;
